@@ -38,10 +38,12 @@ export function MainContent() {
       <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="flex-1 min-h-screen border-r border-gray-800">
         {activeTab === "home" ? (
-          renderActiveTab()
+          <div className="flex justify-center">
+            {renderActiveTab()}
+          </div>
         ) : (
-          <div className="flex items-center justify-center min-h-screen p-6">
-            <div className="max-w-2xl w-full">
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="w-full max-w-2xl mx-auto px-6">
               {renderActiveTab()}
             </div>
           </div>
