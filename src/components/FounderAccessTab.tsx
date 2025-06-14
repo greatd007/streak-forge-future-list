@@ -6,10 +6,61 @@ import { Button } from "@/components/ui/button";
 
 export function FounderAccessTab() {
   const [selectedPlan, setSelectedPlan] = useState("monthly");
+  const [selectedBadge, setSelectedBadge] = useState("founder");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  const badgeOptions = [
+    {
+      type: "founder" as const,
+      name: "Founder Access",
+      monthlyPrice: 3,
+      yearlyPrice: 32,
+      description: "For consistent builders",
+      features: [
+        "🔵 Blue Verified Badge",
+        "📈 Priority Leaderboard Ranking", 
+        "💬 Comment + Reply Access",
+        "📎 Post Richer Updates",
+        "⏩ Early Access to New Features",
+        "❤️ Support the Community"
+      ]
+    },
+    {
+      type: "investor" as const,
+      name: "Investor Access",
+      monthlyPrice: 10,
+      yearlyPrice: 108,
+      description: "For funding the future",
+      features: [
+        "🟡 Gold Verified Badge",
+        "👑 VIP Leaderboard Status",
+        "💼 Investor-Only Community",
+        "📊 Advanced Analytics Access",
+        "🚀 Beta Feature Priority",
+        "🤝 Direct Founder Connect"
+      ]
+    },
+    {
+      type: "influencer" as const,
+      name: "Influencer Access", 
+      monthlyPrice: 5,
+      yearlyPrice: 54,
+      description: "For inspiring consistency",
+      features: [
+        "🟣 Purple Verified Badge",
+        "📢 Amplified Post Reach",
+        "🎯 Audience Insights",
+        "📱 Content Creation Tools",
+        "⭐ Featured Creator Status",
+        "💜 Exclusive Creator Events"
+      ]
+    }
+  ];
+
+  const selectedBadgeData = badgeOptions.find(badge => badge.type === selectedBadge)!;
+
   const handleUpgrade = () => {
-    console.log("Upgrade to Founder Access clicked");
+    console.log(`Upgrade to ${selectedBadge} clicked`);
     // This would integrate with Stripe or payment provider
   };
 
@@ -20,7 +71,7 @@ export function FounderAccessTab() {
   const faqItems = [
     {
       question: "Can I still use FoundrStreak for free?",
-      answer: "Yes. But Founder Access unlocks key visibility and community tools."
+      answer: "Yes. But premium access unlocks key visibility and community tools."
     },
     {
       question: "Will I lose my streak if I don't subscribe?", 
@@ -33,6 +84,10 @@ export function FounderAccessTab() {
     {
       question: "What payment methods do you accept?",
       answer: "We accept all major credit cards through our secure Stripe integration."
+    },
+    {
+      question: "Can I switch between badge types?",
+      answer: "Yes, you can upgrade or change your badge type at any time from your account settings."
     }
   ];
 
@@ -52,105 +107,56 @@ export function FounderAccessTab() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mb-8 shadow-lg shadow-blue-500/30">
-            <UserBadge type="founder" className="w-10 h-10" />
+            <UserBadge type={selectedBadge} className="w-10 h-10" />
           </div>
           
           <h1 className="text-6xl font-bold mb-6 leading-tight">
-            Upgrade to <span className="text-blue-400">Founder Access</span>
+            Choose Your <span className="text-blue-400">Verified Badge</span>
           </h1>
           <p className="text-2xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Unlock your blue badge. Get visibility, tools, and early access. All for $3/month.
+            Unlock exclusive features, get visibility, and join the verified community.
           </p>
-          
-          <Button
-            onClick={handleUpgrade}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-12 rounded-full text-xl h-auto transition-all shadow-lg hover:shadow-xl hover:shadow-blue-500/30 mb-4"
-          >
-            Get Founder Access – $3/month
-          </Button>
-          <p className="text-gray-500 text-sm">Cancel anytime. You'll be billed monthly.</p>
         </div>
 
-        {/* Feature Breakdown Section */}
+        {/* Badge Selection */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-12">What's included:</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: "🔵",
-                title: "Blue Verified Badge",
-                description: "Show up with credibility"
-              },
-              {
-                icon: "📈", 
-                title: "Priority Leaderboard Ranking",
-                description: "Get boosted visibility"
-              },
-              {
-                icon: "💬",
-                title: "Comment + Reply Access",
-                description: "Engage in the founder feed"
-              },
-              {
-                icon: "📎",
-                title: "Post Richer Updates",
-                description: "Images, links, and embeds"
-              },
-              {
-                icon: "⏩",
-                title: "Early Access to New Features",
-                description: "Be first to try new tools"
-              },
-              {
-                icon: "❤️",
-                title: "Support the Community",
-                description: "Help keep FoundrStreak ad-free"
-              }
-            ].map((feature, index) => (
-              <div key={index} className="bg-gray-900/50 rounded-2xl p-6 text-center hover:bg-gray-900/70 transition-colors">
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-3 text-white">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
+          <h2 className="text-3xl font-bold text-center mb-12">Choose Your Badge</h2>
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {badgeOptions.map((badge) => (
+              <div 
+                key={badge.type}
+                onClick={() => setSelectedBadge(badge.type)}
+                className={`bg-gray-900/50 rounded-2xl p-6 cursor-pointer transition-all hover:bg-gray-900/70 border-2 ${
+                  selectedBadge === badge.type ? 'border-blue-500' : 'border-transparent'
+                }`}
+              >
+                <div className="text-center">
+                  <div className="mb-4 flex justify-center">
+                    <UserBadge type={badge.type} className="w-12 h-12" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{badge.name}</h3>
+                  <p className="text-gray-400 mb-4">{badge.description}</p>
+                  <div className="text-2xl font-bold">
+                    ${selectedPlan === "monthly" ? badge.monthlyPrice : badge.yearlyPrice}
+                    <span className="text-sm text-gray-400 font-normal">
+                      /{selectedPlan === "monthly" ? "month" : "year"}
+                    </span>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Visual Comparison Section */}
+        {/* Feature Breakdown Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-12">Free vs Founder Access</h2>
-          <div className="bg-gray-900/50 rounded-3xl p-8 max-w-3xl mx-auto">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="text-left py-4 px-4 text-xl font-semibold">Feature</th>
-                    <th className="text-center py-4 px-4 text-xl font-semibold text-gray-400">Free</th>
-                    <th className="text-center py-4 px-4 text-xl font-semibold text-blue-400">Founder Access</th>
-                  </tr>
-                </thead>
-                <tbody className="space-y-4">
-                  {[
-                    ["Daily Check-in", true, true],
-                    ["Verified Badge", false, true],
-                    ["Comment/Reply Access", false, true],
-                    ["Leaderboard Boost", false, true],
-                    ["Post Enhancements", false, true],
-                    ["Early Feature Access", false, true]
-                  ].map(([feature, free, founder], index) => (
-                    <tr key={index} className="border-b border-gray-800 last:border-b-0">
-                      <td className="py-4 px-4 text-gray-200">{feature}</td>
-                      <td className="text-center py-4 px-4">
-                        {free ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-gray-500 mx-auto" />}
-                      </td>
-                      <td className="text-center py-4 px-4">
-                        {founder ? <Check className="w-5 h-5 text-blue-500 mx-auto" /> : <X className="w-5 h-5 text-gray-500 mx-auto" />}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <h2 className="text-3xl font-bold text-center mb-12">What's included with {selectedBadgeData.name}:</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {selectedBadgeData.features.map((feature, index) => (
+              <div key={index} className="bg-gray-900/50 rounded-2xl p-6 text-center hover:bg-gray-900/70 transition-colors">
+                <p className="text-lg font-medium text-white">{feature}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -183,18 +189,24 @@ export function FounderAccessTab() {
             </button>
           </div>
 
-          {/* Pricing */}
+          {/* Selected Badge Info */}
           <div className="text-center mb-8">
+            <div className="mb-4 flex justify-center">
+              <UserBadge type={selectedBadge} className="w-16 h-16" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2">{selectedBadgeData.name}</h3>
             <div className="flex items-baseline justify-center gap-2 mb-2">
               <span className="text-5xl font-bold">
-                ${selectedPlan === "monthly" ? "3" : "32"}
+                ${selectedPlan === "monthly" ? selectedBadgeData.monthlyPrice : selectedBadgeData.yearlyPrice}
               </span>
               <span className="text-gray-400 text-lg">
                 / {selectedPlan === "monthly" ? "month" : "year"}
               </span>
             </div>
             {selectedPlan === "yearly" && (
-              <p className="text-green-400 text-sm">Save $4 per year</p>
+              <p className="text-green-400 text-sm">
+                Save ${(selectedBadgeData.monthlyPrice * 12) - selectedBadgeData.yearlyPrice} per year
+              </p>
             )}
           </div>
 
@@ -203,7 +215,7 @@ export function FounderAccessTab() {
             onClick={handleUpgrade}
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-full text-lg h-auto transition-all shadow-lg hover:shadow-xl"
           >
-            Subscribe & get verified
+            Get {selectedBadgeData.name} – ${selectedPlan === "monthly" ? selectedBadgeData.monthlyPrice : selectedBadgeData.yearlyPrice}/{selectedPlan === "monthly" ? "month" : "year"}
           </Button>
 
           {/* Security Badge */}
