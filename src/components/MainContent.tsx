@@ -49,25 +49,23 @@ export function MainContent() {
           </div>
         )}
       </main>
-      {activeTab === "home" && (
-        <div className="w-80 p-4 hidden lg:block">
-          <div className="bg-gray-900 rounded-2xl p-4">
-            <h3 className="text-lg font-bold mb-3">Who to follow</h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="font-medium">@topbuilder</p>
-                  <p className="text-sm text-gray-400">🔥 45-day streak</p>
-                </div>
-                <button className="px-4 py-1 bg-white text-black rounded-full text-sm font-medium">
-                  Follow
-                </button>
+      <div className="w-80 p-4 hidden lg:block">
+        <div className="bg-gray-900 rounded-2xl p-4">
+          <h3 className="text-lg font-bold mb-3">Who to follow</h3>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+              <div className="flex-1">
+                <p className="font-medium">@topbuilder</p>
+                <p className="text-sm text-gray-400">🔥 45-day streak</p>
               </div>
+              <button className="px-4 py-1 bg-white text-black rounded-full text-sm font-medium">
+                Follow
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
