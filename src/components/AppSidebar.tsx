@@ -14,37 +14,30 @@ import { useState } from "react";
 const menuItems = [
   {
     title: "🏠 Home",
-    icon: Home,
     key: "home",
   },
   {
     title: "🔥 Streak",
-    icon: Home, // Using Home as placeholder since we're showing emojis
     key: "streak",
   },
   {
     title: "💡 Idea Bank",
-    icon: Home,
     key: "idea-bank",
   },
   {
     title: "🏆 Leaderboard",
-    icon: Home,
     key: "leaderboard",
   },
   {
     title: "🏅 Founder Access",
-    icon: Home,
     key: "founder-access",
   },
   {
     title: "👤 Profile",
-    icon: Home,
     key: "profile",
   },
   {
     title: "⚙️ Settings",
-    icon: Settings,
     key: "settings",
   },
 ];
