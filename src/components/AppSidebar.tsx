@@ -49,10 +49,10 @@ interface AppSidebarProps {
 
 export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps) {
   return (
-    <Sidebar className="border-r border-gray-200 bg-white">
-      <SidebarContent className="bg-white pt-4">
+    <Sidebar className="border-r border-gray-800 bg-black">
+      <SidebarContent className="bg-black pt-4">
         <div className="px-6 mb-8">
-          <h1 className="text-2xl font-bold text-black">FoundrStreak</h1>
+          <h1 className="text-2xl font-bold text-white">FoundrStreak</h1>
         </div>
         
         <SidebarGroup>
@@ -63,7 +63,7 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
                   <SidebarMenuButton
                     asChild
                     isActive={activeTab === item.key}
-                    className="text-black hover:bg-gray-100 rounded-full px-4 py-3 text-lg transition-colors data-[active=true]:bg-gray-100 data-[active=true]:font-bold"
+                    className="text-white hover:bg-gray-800 rounded-full px-4 py-3 text-lg transition-colors data-[active=true]:bg-gray-800 data-[active=true]:font-bold"
                   >
                     <button 
                       onClick={() => onTabChange?.(item.key)}
@@ -79,7 +79,7 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
         </SidebarGroup>
 
         <div className="mt-8 px-6">
-          <button className="w-full bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-full transition-all duration-200 flex items-center justify-center gap-2">
+          <button className="w-full bg-white hover:bg-gray-200 text-black font-bold py-3 px-8 rounded-full transition-all duration-200 flex items-center justify-center gap-2">
             <Plus className="w-5 h-5" />
             Post
           </button>
