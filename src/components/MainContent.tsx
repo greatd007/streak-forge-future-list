@@ -7,6 +7,7 @@ import { IdeaBankTab } from "./IdeaBankTab";
 import { LeaderboardTab } from "./LeaderboardTab";
 import { ProfileTab } from "./ProfileTab";
 import { SettingsTab } from "./SettingsTab";
+import { FounderAccessTab } from "./FounderAccessTab";
 
 export function MainContent() {
   const [activeTab, setActiveTab] = useState("home");
@@ -21,6 +22,8 @@ export function MainContent() {
         return <IdeaBankTab />;
       case "leaderboard":
         return <LeaderboardTab />;
+      case "founder-access":
+        return <FounderAccessTab />;
       case "profile":
         return <ProfileTab />;
       case "settings":
