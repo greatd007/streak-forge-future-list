@@ -43,7 +43,7 @@ export function UserBadge({ type, className = "" }: UserBadgeProps) {
 
   return (
     <>
-      <style jsx>{`
+      <style>{`
         @keyframes float3d {
           0%, 100% { 
             transform: perspective(100px) rotateX(0deg) rotateY(0deg) translateZ(0px);
@@ -244,7 +244,7 @@ export function UserBadge({ type, className = "" }: UserBadgeProps) {
             </div>
             <div className="text-xs opacity-90">
               {type === 'founder' ? 'You\'ve committed to consistency. Let\'s build.' :
-               type === 'investor' ? 'Access granted to a network of consistent builders.' :
+               type === 'investor' ? 'Invite only - Access granted to a network of consistent builders.' :
                'Your voice matters. Use it to inspire consistency.'}
             </div>
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 
