@@ -17,19 +17,19 @@ const menuItems = [
     key: "home",
   },
   {
-    title: "🔍 Explore",
+    title: "🔥 Streak",
     key: "streak",
   },
   {
-    title: "🔔 Notifications",
+    title: "💡 Idea Bank",
     key: "idea-bank",
   },
   {
-    title: "✉️ Messages",
+    title: "🏆 Leaderboard",
     key: "leaderboard",
   },
   {
-    title: "📋 Lists",
+    title: "🏅 Founder Access",
     key: "founder-access",
   },
   {
