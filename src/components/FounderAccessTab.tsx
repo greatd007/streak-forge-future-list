@@ -1,30 +1,45 @@
 
 import { useState } from "react";
-import { Check, ArrowLeft, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ArrowLeft, X, ChevronDown, ChevronUp, Star } from "lucide-react";
 import { UserBadge } from "./UserBadge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type BadgeType = "founder" | "investor" | "influencer";
 
 export function FounderAccessTab() {
   const [selectedPlan, setSelectedPlan] = useState("monthly");
-  const [selectedBadge, setSelectedBadge] = useState<BadgeType>("founder");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const badgeOptions = [
+    {
+      type: "influencer" as const,
+      name: "Influencer Access",
+      monthlyPrice: 5,
+      yearlyPrice: 54,
+      description: "For inspiring consistency",
+      status: "coming-soon",
+      features: [
+        "📢 Boosted visibility in feed",
+        "🔗 Link post support", 
+        "💬 Creator community access",
+        "🎯 Audience insights",
+        "⭐ Featured creator status"
+      ]
+    },
     {
       type: "founder" as const,
       name: "Founder Access",
       monthlyPrice: 3,
       yearlyPrice: 32,
       description: "For consistent builders",
+      status: "active",
       features: [
         "🔵 Blue Verified Badge",
-        "📈 Priority Leaderboard Ranking", 
         "💬 Comment + Reply Access",
-        "📎 Post Richer Updates",
-        "⏩ Early Access to New Features",
-        "❤️ Support the Community"
+        "📈 Priority Leaderboard Ranking",
+        "📎 Post Richer Updates", 
+        "⏩ Early Access to New Features"
       ]
     },
     {
@@ -33,41 +48,23 @@ export function FounderAccessTab() {
       monthlyPrice: 10,
       yearlyPrice: 108,
       description: "For funding the future",
+      status: "invite-only",
       features: [
         "🟡 Gold Verified Badge",
-        "👑 VIP Leaderboard Status",
-        "💼 Investor-Only Community",
-        "📊 Advanced Analytics Access",
-        "🚀 Beta Feature Priority",
-        "🤝 Direct Founder Connect"
-      ]
-    },
-    {
-      type: "influencer" as const,
-      name: "Influencer Access", 
-      monthlyPrice: 5,
-      yearlyPrice: 54,
-      description: "For inspiring consistency",
-      features: [
-        "🟣 Purple Verified Badge",
-        "📢 Amplified Post Reach",
-        "🎯 Audience Insights",
-        "📱 Content Creation Tools",
-        "⭐ Featured Creator Status",
-        "💜 Exclusive Creator Events"
+        "🧠 View startup ideas",
+        "📊 Track top builders", 
+        "🏆 VIP community access",
+        "🤝 Direct founder connect"
       ]
     }
   ];
 
-  const selectedBadgeData = badgeOptions.find(badge => badge.type === selectedBadge)!;
-
-  const handleUpgrade = () => {
-    console.log(`Upgrade to ${selectedBadge} clicked`);
+  const handleUpgrade = (badgeType: BadgeType) => {
+    console.log(`Upgrade to ${badgeType} clicked`);
     // This would integrate with Stripe or payment provider
   };
 
   const handleBack = () => {
-    // This will trigger the parent component to change tabs
     window.history.back();
   };
 
@@ -91,10 +88,6 @@ export function FounderAccessTab() {
     {
       question: "What payment methods do you accept?",
       answer: "We accept all major credit cards through our secure Stripe integration."
-    },
-    {
-      question: "Can I switch between badge types?",
-      answer: "Yes, you can upgrade or change your badge type at any time from your account settings."
     }
   ];
 
@@ -117,72 +110,23 @@ export function FounderAccessTab() {
         </button>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8 lg:py-12">
+      <div className="max-w-6xl mx-auto px-6 py-8 lg:py-12">
         {/* Hero Section */}
         <div className="text-center mb-12 lg:mb-16">
-          <div className="inline-flex items-center justify-center w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mb-6 lg:mb-8 shadow-lg shadow-blue-500/30">
-            <UserBadge type={selectedBadge} className="w-8 h-8 lg:w-10 lg:h-10" />
-          </div>
-          
           <h1 className="text-4xl lg:text-6xl font-bold mb-4 lg:mb-6 leading-tight">
-            Choose Your <span className="text-blue-400">Verified Badge</span>
+            Upgrade to <span className="text-blue-400">Founder Access</span>
           </h1>
           <p className="text-lg lg:text-2xl text-gray-300 mb-8 lg:mb-12 max-w-2xl mx-auto leading-relaxed">
-            Unlock exclusive features, get visibility, and join the verified community.
+            Choose your badge and unlock exclusive features
           </p>
         </div>
 
-        {/* Badge Selection */}
-        <div className="mb-12 lg:mb-16">
-          <h2 className="text-2xl lg:text-3xl font-bold text-center mb-8 lg:mb-12">Choose Your Badge</h2>
-          <div className="grid gap-4 lg:gap-6 mb-8 lg:mb-12">
-            {badgeOptions.map((badge) => (
-              <div 
-                key={badge.type}
-                onClick={() => setSelectedBadge(badge.type as BadgeType)}
-                className={`bg-gray-900/50 rounded-2xl p-4 lg:p-6 cursor-pointer transition-all hover:bg-gray-900/70 border-2 ${
-                  selectedBadge === badge.type ? 'border-blue-500' : 'border-transparent'
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0">
-                    <UserBadge type={badge.type} className="w-10 h-10 lg:w-12 lg:h-12" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg lg:text-xl font-semibold mb-1">{badge.name}</h3>
-                    <p className="text-gray-400 text-sm lg:text-base mb-2">{badge.description}</p>
-                    <div className="text-xl lg:text-2xl font-bold">
-                      ${selectedPlan === "monthly" ? badge.monthlyPrice : badge.yearlyPrice}
-                      <span className="text-sm text-gray-400 font-normal">
-                        /{selectedPlan === "monthly" ? "month" : "year"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Feature Breakdown Section */}
-        <div className="mb-12 lg:mb-16">
-          <h2 className="text-2xl lg:text-3xl font-bold text-center mb-8 lg:mb-12">What's included with {selectedBadgeData.name}:</h2>
-          <div className="grid gap-4 lg:gap-6">
-            {selectedBadgeData.features.map((feature, index) => (
-              <div key={index} className="bg-gray-900/50 rounded-2xl p-4 lg:p-6 text-center hover:bg-gray-900/70 transition-colors">
-                <p className="text-base lg:text-lg font-medium text-white">{feature}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Plan Selection */}
-        <div className="bg-gray-900/50 rounded-3xl p-6 lg:p-8 mb-12 lg:mb-16 max-w-2xl mx-auto">
-          {/* Plan Toggle */}
-          <div className="flex bg-gray-800 rounded-full p-1 mb-6 lg:mb-8">
+        {/* Plan Selection Toggle */}
+        <div className="flex justify-center mb-12 lg:mb-16">
+          <div className="bg-gray-900/50 rounded-full p-1 max-w-sm mx-auto">
             <button
               onClick={() => setSelectedPlan("monthly")}
-              className={`flex-1 py-3 px-4 lg:px-6 rounded-full text-sm lg:text-base font-medium transition-all ${
+              className={`px-6 py-3 rounded-full text-sm font-medium transition-all ${
                 selectedPlan === "monthly"
                   ? "bg-blue-500 text-white"
                   : "text-gray-400 hover:text-white"
@@ -192,7 +136,7 @@ export function FounderAccessTab() {
             </button>
             <button
               onClick={() => setSelectedPlan("yearly")}
-              className={`flex-1 py-3 px-4 lg:px-6 rounded-full text-sm lg:text-base font-medium transition-all relative ${
+              className={`px-6 py-3 rounded-full text-sm font-medium transition-all relative ${
                 selectedPlan === "yearly"
                   ? "bg-blue-500 text-white"
                   : "text-gray-400 hover:text-white"
@@ -204,40 +148,102 @@ export function FounderAccessTab() {
               </span>
             </button>
           </div>
+        </div>
 
-          {/* Selected Badge Info */}
-          <div className="text-center mb-6 lg:mb-8">
-            <div className="mb-4 flex justify-center">
-              <UserBadge type={selectedBadge} className="w-12 h-12 lg:w-16 lg:h-16" />
-            </div>
-            <h3 className="text-xl lg:text-2xl font-bold mb-2">{selectedBadgeData.name}</h3>
-            <div className="flex items-baseline justify-center gap-2 mb-2">
-              <span className="text-3xl lg:text-5xl font-bold">
-                ${selectedPlan === "monthly" ? selectedBadgeData.monthlyPrice : selectedBadgeData.yearlyPrice}
-              </span>
-              <span className="text-gray-400 text-base lg:text-lg">
-                / {selectedPlan === "monthly" ? "month" : "year"}
-              </span>
-            </div>
-            {selectedPlan === "yearly" && (
-              <p className="text-green-400 text-sm">
-                Save ${(selectedBadgeData.monthlyPrice * 12) - selectedBadgeData.yearlyPrice} per year
-              </p>
-            )}
-          </div>
+        {/* 3-Card Pricing Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
+          {badgeOptions.map((badge, index) => (
+            <Card 
+              key={badge.type}
+              className={`relative bg-gray-900/50 border-2 transition-all hover:bg-gray-900/70 ${
+                badge.type === 'founder' 
+                  ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg shadow-blue-500/20' 
+                  : 'border-gray-700 hover:border-gray-600'
+              }`}
+            >
+              {/* Most Popular Badge */}
+              {badge.type === 'founder' && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <div className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                    <Star className="w-3 h-3" />
+                    Most Popular
+                  </div>
+                </div>
+              )}
 
-          {/* Subscribe Button */}
-          <Button
-            onClick={handleUpgrade}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 lg:py-4 rounded-full text-base lg:text-lg h-auto transition-all shadow-lg hover:shadow-xl"
-          >
-            Get {selectedBadgeData.name} – ${selectedPlan === "monthly" ? selectedBadgeData.monthlyPrice : selectedBadgeData.yearlyPrice}/{selectedPlan === "monthly" ? "month" : "year"}
-          </Button>
+              <CardHeader className="text-center pb-4">
+                <div className="flex justify-center mb-4">
+                  <UserBadge type={badge.type} className="w-12 h-12" />
+                </div>
+                <CardTitle className="text-xl font-bold text-white mb-2">
+                  {badge.name}
+                </CardTitle>
+                <p className="text-gray-400 text-sm mb-4">{badge.description}</p>
+                
+                {/* Price */}
+                <div className="mb-4">
+                  {badge.status === "invite-only" ? (
+                    <div className="text-2xl font-bold text-yellow-400">Invite Only</div>
+                  ) : badge.status === "coming-soon" ? (
+                    <div className="text-2xl font-bold text-purple-400">Coming Soon</div>
+                  ) : (
+                    <div>
+                      <div className="text-3xl font-bold text-white">
+                        ${selectedPlan === "monthly" ? badge.monthlyPrice : badge.yearlyPrice}
+                      </div>
+                      <div className="text-gray-400 text-sm">
+                        /{selectedPlan === "monthly" ? "month" : "year"}
+                      </div>
+                      {selectedPlan === "yearly" && (
+                        <div className="text-green-400 text-xs mt-1">
+                          Save ${(badge.monthlyPrice * 12) - badge.yearlyPrice}/year
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
 
-          {/* Security Badge */}
-          <div className="text-center mt-4 lg:mt-6">
-            <p className="text-gray-500 text-sm">🔒 Powered by Stripe</p>
-          </div>
+              <CardContent className="pt-0">
+                {/* Features */}
+                <div className="space-y-3 mb-6">
+                  {badge.features.map((feature, featureIndex) => (
+                    <div key={featureIndex} className="flex items-center gap-3">
+                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      <span className="text-gray-300 text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA Button */}
+                <Button
+                  onClick={() => handleUpgrade(badge.type)}
+                  disabled={badge.status !== "active"}
+                  className={`w-full py-3 rounded-full font-semibold transition-all ${
+                    badge.type === 'founder'
+                      ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-lg hover:shadow-xl'
+                      : badge.status === "invite-only"
+                      ? 'bg-yellow-900 text-yellow-400 cursor-not-allowed'
+                      : badge.status === "coming-soon"
+                      ? 'bg-purple-900 text-purple-400 cursor-not-allowed'
+                      : 'bg-gray-700 hover:bg-gray-600 text-white'
+                  }`}
+                >
+                  {badge.status === "invite-only" 
+                    ? "Invite Only" 
+                    : badge.status === "coming-soon"
+                    ? "Coming Soon"
+                    : `Get ${badge.name}`
+                  }
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Trust Badge */}
+        <div className="text-center mb-12">
+          <p className="text-gray-500 text-sm">🔒 Secured checkout via Stripe · Cancel anytime</p>
         </div>
 
         {/* FAQ Section */}
