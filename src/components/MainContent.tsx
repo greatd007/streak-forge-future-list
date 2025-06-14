@@ -1,6 +1,8 @@
+
 import { useState } from "react";
 import { Menu, ArrowLeft } from "lucide-react";
 import { AppSidebar } from "./AppSidebar";
+import { MobileMenu } from "./MobileMenu";
 import { HomeFeed } from "./HomeFeed";
 import { StreakTab } from "./StreakTab";
 import { IdeaBankTab } from "./IdeaBankTab";
@@ -98,7 +100,7 @@ export function MainContent() {
                 <SheetDescription className="sr-only">
                   Navigate between different sections of the app
                 </SheetDescription>
-                <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+                <MobileMenu activeTab={activeTab} onTabChange={handleTabChange} />
               </SheetContent>
             </Sheet>
           ) : (
@@ -132,7 +134,7 @@ export function MainContent() {
                 <SheetDescription className="sr-only">
                   Navigate between different sections of the app
                 </SheetDescription>
-                <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+                <MobileMenu activeTab={activeTab} onTabChange={handleTabChange} />
               </SheetContent>
             </Sheet>
           )}
