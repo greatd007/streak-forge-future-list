@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Menu, ArrowLeft } from "lucide-react";
 import { AppSidebar } from "./AppSidebar";
@@ -94,14 +93,12 @@ export function MainContent() {
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="bg-black border-gray-800 p-0 w-80">
+              <SheetContent side="left" className="bg-black border-gray-800 p-0 w-80 text-white">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <SheetDescription className="sr-only">
                   Navigate between different sections of the app
                 </SheetDescription>
-                <div className="h-full">
-                  <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
-                </div>
+                <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
               </SheetContent>
             </Sheet>
           ) : (
@@ -130,14 +127,12 @@ export function MainContent() {
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="bg-black border-gray-800 p-0 w-80">
+              <SheetContent side="left" className="bg-black border-gray-800 p-0 w-80 text-white">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 <SheetDescription className="sr-only">
                   Navigate between different sections of the app
                 </SheetDescription>
-                <div className="h-full">
-                  <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
-                </div>
+                <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
               </SheetContent>
             </Sheet>
           )}
