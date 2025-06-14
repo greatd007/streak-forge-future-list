@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calendar, CheckCircle, Flame, Target, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function StreakTab() {
   const [checkedIn, setCheckedIn] = useState(false);
-  const [hasGoal, setHasGoal] = useState(true); // Set to true to show existing goal
+  const [hasGoal, setHasGoal] = useState(false); // Changed to false to show initial state
   const [commitment, setCommitment] = useState("Ship daily");
   const [duration, setDuration] = useState("30");
   const [newCommitment, setNewCommitment] = useState("");
@@ -59,7 +58,7 @@ export function StreakTab() {
       <div className="sticky top-0 bg-[#0B0B0F]/80 backdrop-blur-md border-b border-gray-800 p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">Streak</h1>
-          {hasGoal && (
+          {!hasGoal && (
             <Button
               onClick={handleStartNewStreak}
               variant="outline"
