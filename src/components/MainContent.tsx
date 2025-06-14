@@ -40,7 +40,7 @@ export function MainContent() {
         {activeTab === "home" ? (
           renderActiveTab()
         ) : (
-          <div className="flex items-start justify-center min-h-screen">
+          <div className="flex items-center justify-center min-h-screen p-6">
             <div className="max-w-2xl w-full">
               {renderActiveTab()}
             </div>
