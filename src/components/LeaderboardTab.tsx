@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Trophy, Medal, Award, TrendingUp } from "lucide-react";
+import { UserBadge, BadgeType } from "./UserBadge";
 
 const mockLeaderboard = [
   {
@@ -11,6 +12,7 @@ const mockLeaderboard = [
     longestStreak: 89,
     consistency: 94,
     points: 2840,
+    badge: "founder" as BadgeType,
   },
   {
     rank: 2,
@@ -20,6 +22,7 @@ const mockLeaderboard = [
     longestStreak: 67,
     consistency: 89,
     points: 2156,
+    badge: "investor" as BadgeType,
   },
   {
     rank: 3,
@@ -29,6 +32,7 @@ const mockLeaderboard = [
     longestStreak: 52,
     consistency: 87,
     points: 1943,
+    badge: "influencer" as BadgeType,
   },
   {
     rank: 4,
@@ -120,7 +124,10 @@ export function LeaderboardTab() {
             <div className={`w-16 h-16 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center font-bold text-lg mx-auto mb-2 ${getRankGlow(2)}`}>
               {mockLeaderboard[1].avatar}
             </div>
-            <p className="font-medium text-sm">{mockLeaderboard[1].username}</p>
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <p className="font-medium text-sm">{mockLeaderboard[1].username}</p>
+              {mockLeaderboard[1].badge && <UserBadge type={mockLeaderboard[1].badge} />}
+            </div>
             <p className="text-gray-400 text-xs">🔥 {mockLeaderboard[1].currentStreak}d</p>
           </div>
 
@@ -129,7 +136,10 @@ export function LeaderboardTab() {
             <div className={`w-20 h-20 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-2 ${getRankGlow(1)}`}>
               {mockLeaderboard[0].avatar}
             </div>
-            <p className="font-bold">{mockLeaderboard[0].username}</p>
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <p className="font-bold">{mockLeaderboard[0].username}</p>
+              {mockLeaderboard[0].badge && <UserBadge type={mockLeaderboard[0].badge} />}
+            </div>
             <p className="text-yellow-500 text-sm">🔥 {mockLeaderboard[0].currentStreak}d</p>
             <Trophy className="w-6 h-6 text-yellow-500 mx-auto mt-1" />
           </div>
@@ -139,7 +149,10 @@ export function LeaderboardTab() {
             <div className={`w-14 h-14 bg-gradient-to-r from-amber-600 to-amber-700 rounded-full flex items-center justify-center font-bold mx-auto mb-2 ${getRankGlow(3)}`}>
               {mockLeaderboard[2].avatar}
             </div>
-            <p className="font-medium text-sm">{mockLeaderboard[2].username}</p>
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <p className="font-medium text-sm">{mockLeaderboard[2].username}</p>
+              {mockLeaderboard[2].badge && <UserBadge type={mockLeaderboard[2].badge} />}
+            </div>
             <p className="text-gray-400 text-xs">🔥 {mockLeaderboard[2].currentStreak}d</p>
           </div>
         </div>
@@ -168,7 +181,10 @@ export function LeaderboardTab() {
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-white">{user.username}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-bold text-white">{user.username}</p>
+                      {user.badge && <UserBadge type={user.badge} />}
+                    </div>
                     <div className="flex items-center gap-4 text-sm text-gray-400">
                       <span className="flex items-center gap-1">
                         <TrendingUp className="w-4 h-4" />
@@ -200,7 +216,10 @@ export function LeaderboardTab() {
             YU
           </div>
           <div className="flex-1">
-            <p className="font-bold text-white">@you</p>
+            <div className="flex items-center gap-2 mb-1">
+              <p className="font-bold text-white">@you</p>
+              <UserBadge type="founder" />
+            </div>
             <p className="text-sm text-gray-400">85% consistency</p>
           </div>
           <div className="text-right">

@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Heart, MessageCircle, Repeat2, Share } from "lucide-react";
+import { UserBadge, BadgeType } from "./UserBadge";
 
 const mockPosts = [
   {
@@ -13,6 +14,7 @@ const mockPosts = [
     comments: 3,
     reposts: 1,
     timestamp: "2h",
+    badge: "founder" as BadgeType,
   },
   {
     id: 2,
@@ -24,6 +26,7 @@ const mockPosts = [
     comments: 8,
     reposts: 5,
     timestamp: "4h",
+    badge: "influencer" as BadgeType,
   },
   {
     id: 3,
@@ -88,6 +91,7 @@ export function HomeFeed() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-bold">{post.user}</span>
+                  {post.badge && <UserBadge type={post.badge} />}
                   <span className="text-gray-500">·</span>
                   <span className="text-gray-500">{post.timestamp}</span>
                   <span className="text-orange-500 font-medium">🔥 Day {post.streak}</span>

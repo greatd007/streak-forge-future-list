@@ -1,5 +1,5 @@
-
 import { Calendar, MapPin, Link, Edit } from "lucide-react";
+import { UserBadge } from "./UserBadge";
 
 const userPosts = [
   {
@@ -45,6 +45,7 @@ export function ProfileTab() {
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <h2 className="text-2xl font-bold">Your Name</h2>
+              <UserBadge type="founder" />
               <button className="px-4 py-1 border border-gray-600 text-gray-300 rounded-full text-sm hover:bg-gray-800 transition-colors flex items-center gap-1">
                 <Edit className="w-3 h-3" />
                 Edit profile
@@ -120,6 +121,7 @@ export function ProfileTab() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-bold">@yourhandle</span>
+                  <UserBadge type="founder" />
                   <span className="text-gray-500">·</span>
                   <span className="text-gray-500">{post.timestamp}</span>
                   <span className="text-orange-500 font-medium">🔥 Day {post.streak}</span>
