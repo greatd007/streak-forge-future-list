@@ -14,10 +14,10 @@ export function FounderAccessTab() {
 
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-lg mx-auto">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-12">
           <button className="p-2 hover:bg-gray-900 rounded-full transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -26,24 +26,24 @@ export function FounderAccessTab() {
         </div>
 
         {/* Hero Section */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mb-6 relative">
-            <UserBadge type="founder" className="w-10 h-10" />
-            <div className="absolute -top-1 -right-1">
-              <Sparkles className="w-5 h-5 text-yellow-400" />
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full mb-8 relative">
+            <UserBadge type="founder" className="w-12 h-12" />
+            <div className="absolute -top-2 -right-2">
+              <Sparkles className="w-6 h-6 text-yellow-400" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold mb-3">Get verified on FoundrStreak</h2>
-          <p className="text-gray-400 text-base leading-relaxed">
+          <h2 className="text-3xl font-bold mb-4">Get verified on FoundrStreak</h2>
+          <p className="text-gray-400 text-lg leading-relaxed max-w-md mx-auto">
             Subscribe to unlock verification and new features that help you build in public.
           </p>
         </div>
 
         {/* Plan Toggle */}
-        <div className="bg-gray-900 rounded-full p-1 mb-6 flex">
+        <div className="bg-gray-900 rounded-full p-1 mb-8 flex">
           <button
             onClick={() => setSelectedPlan("monthly")}
-            className={`flex-1 py-2 px-4 rounded-full text-sm font-medium transition-all ${
+            className={`flex-1 py-3 px-6 rounded-full text-base font-medium transition-all ${
               selectedPlan === "monthly"
                 ? "bg-white text-black"
                 : "text-gray-400 hover:text-white"
@@ -53,40 +53,40 @@ export function FounderAccessTab() {
           </button>
           <button
             onClick={() => setSelectedPlan("yearly")}
-            className={`flex-1 py-2 px-4 rounded-full text-sm font-medium transition-all relative ${
+            className={`flex-1 py-3 px-6 rounded-full text-base font-medium transition-all relative ${
               selectedPlan === "yearly"
                 ? "bg-white text-black"
                 : "text-gray-400 hover:text-white"
             }`}
           >
             Yearly
-            <span className="absolute -top-2 -right-1 bg-green-500 text-black text-xs px-1.5 py-0.5 rounded-full font-bold">
+            <span className="absolute -top-2 -right-2 bg-green-500 text-black text-xs px-2 py-1 rounded-full font-bold">
               Save 12%
             </span>
           </button>
         </div>
 
         {/* Plan Card */}
-        <div className="border border-gray-800 rounded-2xl p-6 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <UserBadge type="founder" />
+        <div className="border border-gray-800 rounded-3xl p-8 mb-8">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <UserBadge type="founder" className="w-8 h-8" />
               <div>
-                <h3 className="font-semibold">Founder Access</h3>
-                <p className="text-gray-400 text-sm">Get verified</p>
+                <h3 className="text-xl font-semibold">Founder Access</h3>
+                <p className="text-gray-400">Get verified</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold">
+              <div className="text-3xl font-bold">
                 ${selectedPlan === "monthly" ? "3" : "32"}
               </div>
-              <div className="text-gray-400 text-sm">
+              <div className="text-gray-400">
                 per {selectedPlan === "monthly" ? "month" : "year"}
               </div>
             </div>
           </div>
 
-          <div className="space-y-4 mb-6">
+          <div className="space-y-5 mb-8">
             {[
               "Verified streaks with blue badge",
               "Priority visibility on leaderboards", 
@@ -95,18 +95,18 @@ export function FounderAccessTab() {
               "Direct support channel",
               "Help support FoundrStreak development"
             ].map((benefit, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
-                  <Check className="w-3 h-3 text-white" />
+              <div key={index} className="flex items-start gap-4">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
+                  <Check className="w-4 h-4 text-white" />
                 </div>
-                <span className="text-gray-200 text-sm">{benefit}</span>
+                <span className="text-gray-200">{benefit}</span>
               </div>
             ))}
           </div>
 
           <Button
             onClick={handleUpgrade}
-            className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 rounded-full text-base h-auto transition-all"
+            className="w-full bg-white hover:bg-gray-100 text-black font-bold py-4 rounded-full text-lg h-auto transition-all"
           >
             Subscribe & get verified
           </Button>
@@ -114,7 +114,7 @@ export function FounderAccessTab() {
 
         {/* Terms */}
         <div className="text-center">
-          <p className="text-gray-500 text-xs leading-relaxed">
+          <p className="text-gray-500 text-sm leading-relaxed max-w-md mx-auto">
             By subscribing, you agree to our{" "}
             <span className="text-blue-400 hover:underline cursor-pointer">Terms of Service</span>.
             Subscriptions auto-renew until canceled.{" "}
