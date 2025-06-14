@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Calendar, CheckCircle, Flame, Target } from "lucide-react";
+import { Calendar, CheckCircle, Flame, Target, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -46,11 +46,31 @@ export function StreakTab() {
     setHasGoal(false);
   };
 
+  const handleStartNewStreak = () => {
+    setHasGoal(false);
+    setCheckedIn(false);
+    setNewCommitment("");
+    setNewDuration("");
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       {/* Header */}
       <div className="sticky top-0 bg-[#0B0B0F]/80 backdrop-blur-md border-b border-gray-800 p-4">
-        <h1 className="text-xl font-bold">Streak</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold">Streak</h1>
+          {hasGoal && (
+            <Button
+              onClick={handleStartNewStreak}
+              variant="outline"
+              size="sm"
+              className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 flex items-center gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Start New Streak
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Set Your Streak Goal */}
