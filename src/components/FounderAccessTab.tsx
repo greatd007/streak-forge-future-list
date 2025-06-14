@@ -13,8 +13,8 @@ export function FounderAccessTab() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md mx-auto">
+    <div className="bg-black text-white p-4 w-full h-full flex items-center justify-center">
+      <div className="w-full max-w-md">
         
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
