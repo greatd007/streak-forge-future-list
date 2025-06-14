@@ -36,10 +36,16 @@ export function MainContent() {
   return (
     <div className="flex w-full">
       <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-      <main className={`flex-1 min-h-screen border-r border-gray-800 ${activeTab === "home" ? "" : "max-w-none mx-auto"}`}>
-        <div className={activeTab === "home" ? "" : "max-w-2xl mx-auto"}>
-          {renderActiveTab()}
-        </div>
+      <main className="flex-1 min-h-screen border-r border-gray-800">
+        {activeTab === "home" ? (
+          renderActiveTab()
+        ) : (
+          <div className="flex justify-center">
+            <div className="max-w-2xl w-full">
+              {renderActiveTab()}
+            </div>
+          </div>
+        )}
       </main>
       {activeTab === "home" && (
         <div className="w-80 p-4 hidden lg:block">
