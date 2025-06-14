@@ -72,32 +72,31 @@ export function MainContent() {
   };
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full min-h-screen bg-black">
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
       </div>
 
-      {/* Mobile Navigation Sheet */}
-      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-        <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden fixed top-4 left-4 z-50 bg-black/80 hover:bg-black text-white"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="bg-black border-gray-800 p-0">
-          <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
-        </SheetContent>
-      </Sheet>
-
-      <main className="flex-1 min-h-screen border-r border-gray-800">
-        {/* Mobile Header */}
-        {activeTab !== "home" && (
-          <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-800 bg-black sticky top-0 z-40">
+      {/* Mobile Header - Always visible on mobile */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-black border-b border-gray-800">
+        <div className="flex items-center justify-between p-4">
+          {activeTab === "home" ? (
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-gray-900"
+                >
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="bg-black border-gray-800 p-0 w-80">
+                <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+              </SheetContent>
+            </Sheet>
+          ) : (
             <Button
               variant="ghost"
               size="icon"
@@ -106,11 +105,32 @@ export function MainContent() {
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
-            <h1 className="text-lg font-semibold text-white">{getTabTitle()}</h1>
-            <div className="w-10" /> {/* Spacer for centering */}
-          </div>
-        )}
+          )}
+          
+          <h1 className="text-lg font-semibold text-white">{getTabTitle()}</h1>
+          
+          {activeTab === "home" ? (
+            <div className="w-10" />
+          ) : (
+            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-gray-900"
+                >
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="bg-black border-gray-800 p-0 w-80">
+                <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+              </SheetContent>
+            </Sheet>
+          )}
+        </div>
+      </div>
 
+      <main className="flex-1 min-h-screen border-r border-gray-800 pt-16 lg:pt-0">
         {activeTab === "home" ? (
           <div className="flex justify-center">
             {renderActiveTab()}
