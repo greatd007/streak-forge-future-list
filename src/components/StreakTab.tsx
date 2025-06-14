@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Calendar, CheckCircle, Flame, Target, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -11,22 +12,17 @@ export function StreakTab() {
   const [duration, setDuration] = useState("30");
   const [newCommitment, setNewCommitment] = useState("");
   const [newDuration, setNewDuration] = useState("");
+  const [currentStreak, setCurrentStreak] = useState(0); // Start at 0 for new streaks
   
-  const currentStreak = 3;
   const longestStreak = 28;
 
   const recentActivity = [
     { date: "Today", status: "pending" },
-    { date: "Yesterday", status: "completed" },
-    { date: "Dec 13", status: "completed" },
-    { date: "Dec 12", status: "completed" },
-    { date: "Dec 11", status: "completed" },
-    { date: "Dec 10", status: "missed" },
-    { date: "Dec 9", status: "completed" },
   ];
 
   const handleCheckIn = () => {
     setCheckedIn(true);
+    setCurrentStreak(prev => prev + 1);
   };
 
   const handleSetGoal = () => {
@@ -36,6 +32,8 @@ export function StreakTab() {
       setHasGoal(true);
       setNewCommitment("");
       setNewDuration("");
+      setCurrentStreak(0); // Reset streak when setting new goal
+      setCheckedIn(false); // Reset check-in status
     }
   };
 
@@ -50,6 +48,7 @@ export function StreakTab() {
     setCheckedIn(false);
     setNewCommitment("");
     setNewDuration("");
+    setCurrentStreak(0); // Reset streak count
   };
 
   return (
@@ -138,8 +137,11 @@ export function StreakTab() {
                 </Button>
               </div>
               <p className="text-xl font-medium">
-                🔥 You're on a {currentStreak}-day streak toward your {duration}-day build goal: 
-                <span className="text-blue-400 font-bold"> "{commitment}"</span>
+                {currentStreak === 0 ? (
+                  <>🚀 Ready to start your {duration}-day journey: <span className="text-blue-400 font-bold">"{commitment}"</span></>
+                ) : (
+                  <>🔥 You're on a {currentStreak}-day streak toward your {duration}-day build goal: <span className="text-blue-400 font-bold">"{commitment}"</span></>
+                )}
               </p>
               <div className="mt-4 bg-gray-800 rounded-full h-2">
                 <div 
@@ -159,10 +161,14 @@ export function StreakTab() {
               <Flame className="w-16 h-16 text-white" />
             </div>
             <h2 className="text-4xl font-bold mb-2">
-              🔥 {currentStreak}-day streak
+              {currentStreak === 0 ? "🚀 Start your streak!" : `🔥 ${currentStreak}-day streak`}
             </h2>
             <p className="text-gray-400 mb-6">
-              Keep building! Your longest streak was {longestStreak} days.
+              {currentStreak === 0 ? (
+                "Take your first step towards building consistency!"
+              ) : (
+                `Keep building! Your longest streak was ${longestStreak} days.`
+              )}
             </p>
             
             {!checkedIn ? (
@@ -171,12 +177,12 @@ export function StreakTab() {
                 className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-200 hover:shadow-lg hover:shadow-green-500/25 flex items-center gap-3 mx-auto"
               >
                 <CheckCircle className="w-6 h-6" />
-                Check in today ✅
+                {currentStreak === 0 ? "Start your streak! ✅" : "Check in today ✅"}
               </button>
             ) : (
               <div className="bg-green-600/20 border border-green-600 text-green-400 font-bold py-4 px-8 rounded-full text-lg flex items-center gap-3 mx-auto w-fit">
                 <CheckCircle className="w-6 h-6" />
-                Checked in! 🎉
+                {currentStreak === 1 ? "Great start! 🎉" : "Checked in! 🎉"}
               </div>
             )}
           </div>
@@ -229,8 +235,11 @@ export function StreakTab() {
           <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-500/30 rounded-2xl p-6">
             <h3 className="text-lg font-bold mb-2">💪 Keep Going!</h3>
             <p className="text-gray-300">
-              You're doing amazing! Consistency is the key to success. 
-              Just {parseInt(duration) - currentStreak} more days to reach your {duration}-day milestone! 🎯
+              {currentStreak === 0 ? (
+                "Every expert was once a beginner. Take that first step and start building your streak today! 🎯"
+              ) : (
+                `You're doing amazing! Consistency is the key to success. Just ${parseInt(duration) - currentStreak} more days to reach your ${duration}-day milestone! 🎯`
+              )}
             </p>
           </div>
         </div>
