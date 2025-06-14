@@ -14,6 +14,8 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetTitle,
+  SheetDescription,
 } from "@/components/ui/sheet";
 
 export function MainContent() {
@@ -93,7 +95,13 @@ export function MainContent() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="bg-black border-gray-800 p-0 w-80">
-                <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Navigate between different sections of the app
+                </SheetDescription>
+                <div className="h-full">
+                  <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+                </div>
               </SheetContent>
             </Sheet>
           ) : (
@@ -123,7 +131,13 @@ export function MainContent() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="bg-black border-gray-800 p-0 w-80">
-                <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">
+                  Navigate between different sections of the app
+                </SheetDescription>
+                <div className="h-full">
+                  <AppSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+                </div>
               </SheetContent>
             </Sheet>
           )}
