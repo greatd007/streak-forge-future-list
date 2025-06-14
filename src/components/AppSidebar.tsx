@@ -63,11 +63,11 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
                   <SidebarMenuButton
                     asChild
                     isActive={activeTab === item.key}
-                    className="text-white hover:bg-black rounded-full px-4 py-3 text-lg transition-colors data-[active=true]:bg-black data-[active=true]:font-bold"
+                    className="text-white hover:bg-black hover:text-white rounded-full px-4 py-3 text-lg transition-colors data-[active=true]:bg-black data-[active=true]:font-bold data-[active=true]:text-white"
                   >
                     <button 
                       onClick={() => onTabChange?.(item.key)}
-                      className="flex items-center gap-4 w-full"
+                      className="flex items-center gap-4 w-full text-white hover:text-white"
                     >
                       <span className="font-medium">{item.title}</span>
                     </button>
