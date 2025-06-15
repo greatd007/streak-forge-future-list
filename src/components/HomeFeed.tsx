@@ -1,7 +1,10 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart, MessageCircle, Repeat2, Share, Trophy, Flame, Target } from "lucide-react";
 import { UserBadge, BadgeType } from "./UserBadge";
+import { StreakFlame } from "./StreakFlame";
+import { MoodCheckIn } from "./MoodCheckIn";
+import { ReflectionCard } from "./ReflectionCard";
+import { SocialShoutout } from "./SocialShoutout";
 
 const mockPosts = [
   {
@@ -70,11 +73,38 @@ export function HomeFeed() {
   const [checkedIn, setCheckedIn] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(12);
   const [randomQuote] = useState(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
+  const [showMoodCheckIn, setShowMoodCheckIn] = useState(false);
+  const [userMood, setUserMood] = useState<string | null>(null);
+  const [showReflection, setShowReflection] = useState(false);
+  const [showSocialShoutout, setShowSocialShoutout] = useState(false);
+
+  // Show reflection card after 10pm
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 22 && checkedIn) {
+      setShowReflection(true);
+    }
+  }, [checkedIn]);
 
   const handleCheckIn = () => {
     setCheckedIn(true);
     setCurrentStreak(prev => prev + 1);
-    // Add confetti animation trigger here
+    setShowMoodCheckIn(true);
+    
+    // Show social shoutout for milestone streaks
+    if ([7, 30, 100].includes(currentStreak + 1)) {
+      setTimeout(() => setShowSocialShoutout(true), 2000);
+    }
+  };
+
+  const handleMoodSelect = (mood: string) => {
+    setUserMood(mood);
+    setTimeout(() => setShowMoodCheckIn(false), 2000);
+  };
+
+  const handleReflectionSubmit = (reflection: string) => {
+    console.log("Reflection submitted:", reflection);
+    setTimeout(() => setShowReflection(false), 3000);
   };
 
   const progressPercentage = (currentStreak / 100) * 100;
@@ -93,7 +123,7 @@ export function HomeFeed() {
           <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-3xl blur-xl"></div>
           
           <div className="relative z-10">
-            {/* Progress Ring */}
+            {/* Progress Ring with Streak Flame */}
             <div className="relative w-32 h-32 mx-auto mb-6">
               <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
                 <circle
@@ -124,7 +154,7 @@ export function HomeFeed() {
                 </defs>
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <Flame className="w-12 h-12 text-orange-500 animate-pulse" />
+                <StreakFlame streakDay={currentStreak} checkedInToday={checkedIn} />
               </div>
             </div>
 
@@ -160,10 +190,20 @@ export function HomeFeed() {
             ) : (
               <div className="bg-green-600/20 border border-green-600 text-green-400 font-bold py-4 px-8 rounded-full text-lg flex items-center gap-3 mx-auto w-fit">
                 ✅ Day {currentStreak} secured! 🎉
+                {userMood && <span className="ml-2">{
+                  userMood === 'focused' ? '💪' : 
+                  userMood === 'stressed' ? '😵‍💫' : '😐'
+                }</span>}
               </div>
             )}
           </div>
         </div>
+
+        {/* Mood Check-in */}
+        <MoodCheckIn 
+          show={showMoodCheckIn} 
+          onMoodSelect={handleMoodSelect}
+        />
       </div>
 
       {/* Motivation Stats */}
@@ -289,6 +329,19 @@ export function HomeFeed() {
           </div>
         ))}
       </div>
+
+      {/* Reflection Card */}
+      <ReflectionCard 
+        show={showReflection}
+        onReflectionSubmit={handleReflectionSubmit}
+      />
+
+      {/* Social Shoutout Modal */}
+      <SocialShoutout 
+        show={showSocialShoutout}
+        streakDay={currentStreak}
+        onClose={() => setShowSocialShoutout(false)}
+      />
     </div>
   );
 }
