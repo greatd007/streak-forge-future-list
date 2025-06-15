@@ -112,6 +112,43 @@ export function StreakTab() {
     setShowMoodCheckIn(false);
   };
 
+  // Compute the first day and days in the current month
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Build calendar days for the month, marking 'completed' up to the streak day
+  const buildMonthlyData = () => {
+    // Get streak check-in data from localStorage if available
+    const STREAK_COUNT_KEY = "fs_streak_count";
+    const CHECKED_IN_KEY = "fs_checked_in_today";
+    let streakStored = parseInt(localStorage.getItem(STREAK_COUNT_KEY) || "0", 10);
+    const checkedInTodayStr = localStorage.getItem(CHECKED_IN_KEY);
+
+    // If user checked in today, include today; else, only prior days
+    let lastCheckin = streakStored;
+    const isTodayChecked =
+      checkedInTodayStr === new Date().toISOString().slice(0, 10);
+
+    if (!isTodayChecked && streakStored > 0) {
+      lastCheckin = streakStored - 1;
+    }
+
+    // Generate data for each day
+    const arr: { date: number; completed: boolean }[] = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      arr.push({
+        date: i,
+        completed: i <= lastCheckin,
+      });
+    }
+    return arr;
+  };
+
+  const monthlyData = buildMonthlyData();
+
   // Show onboarding card if isOnboarding === true
   if (isOnboarding) {
     return (
@@ -386,11 +423,17 @@ export function StreakTab() {
               This Month
             </h3>
             <div className="grid grid-cols-7 gap-2 mb-4">
+              {/* Day headers */}
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                 <div key={day} className="text-center text-xs text-gray-400 p-2">
                   {day}
                 </div>
               ))}
+              {/* Pad empty days at start of the month */}
+              {Array.from({ length: firstDayOfWeek }).map((_, idx) => (
+                <div key={`pad-${idx}`} />
+              ))}
+              {/* Actual days */}
               {monthlyData.map((day, index) => (
                 <div
                   key={index}
