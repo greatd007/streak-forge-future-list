@@ -6,6 +6,7 @@ import { MoodCheckIn } from './MoodCheckIn';
 import { MilestoneConfetti } from './MilestoneConfetti';
 import { SocialShoutout } from './SocialShoutout';
 import { FounderAccessUpgrade } from './FounderAccessUpgrade';
+import { ScrollArea } from './ui/scroll-area';
 
 export function HomeFeed() {
   const [checkedIn, setCheckedIn] = useState(false);
@@ -44,7 +45,7 @@ export function HomeFeed() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto space-y-8">
-          
+
           {/* Hero Streak Card - Main Focus */}
           <HeroStreakCard
             currentStreak={currentStreak}
@@ -59,8 +60,10 @@ export function HomeFeed() {
             weeklyRank={3}
           />
 
-          {/* Mini Feed Preview - Compact */}
-          <MiniFeedPreview />
+          {/* Mini Feed Preview - Make scrollable here */}
+          <ScrollArea className="max-h-72 rounded-xl">
+            <MiniFeedPreview />
+          </ScrollArea>
         </div>
       </div>
 
