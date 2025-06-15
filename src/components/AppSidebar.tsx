@@ -1,4 +1,3 @@
-
 import {
   Sidebar,
   SidebarContent,
@@ -27,11 +26,11 @@ const menuItems = [
     title: "🏆 Leaderboard",
     key: "leaderboard",
   },
-  // New Notifications tab with a bell icon
+  // Notifications tab with 🔔 emoji
   {
     title: (
       <span className="flex items-center gap-2">
-        <Bell className="w-5 h-5" />
+        <span role="img" aria-label="Notifications" className="text-xl">🔔</span>
         Notifications
       </span>
     ),
