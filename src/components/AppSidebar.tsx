@@ -1,5 +1,4 @@
 
-import { Home, Plus, Settings } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -9,7 +8,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useState } from "react";
 
 const menuItems = [
   {
@@ -29,16 +27,8 @@ const menuItems = [
     key: "leaderboard",
   },
   {
-    title: "🏅 Founder Access",
-    key: "founder-access",
-  },
-  {
     title: "👤 Profile",
     key: "profile",
-  },
-  {
-    title: "⚙️ Settings",
-    key: "settings",
   },
 ];
 
@@ -77,13 +67,6 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        <div className="mt-8 px-6">
-          <button className="w-full bg-white hover:bg-gray-200 text-black font-bold py-3 px-8 rounded-full transition-all duration-200 flex items-center justify-center gap-2">
-            <Plus className="w-5 h-5" />
-            Post
-          </button>
-        </div>
       </SidebarContent>
     </Sidebar>
   );
