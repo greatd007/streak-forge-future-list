@@ -18,36 +18,7 @@ export function HeroStreakCard({ currentStreak, checkedInToday, onCheckIn }: Her
 
   const { toast, dismiss } = useToast();
 
-  // --- Founder Access Toast logic ---
-  useEffect(() => {
-    // Only show toast if user is not checked in, and once per session
-    if (!checkedInToday && typeof window !== "undefined" && !window.sessionStorage.getItem("founder_access_toast_shown")) {
-      window.sessionStorage.setItem("founder_access_toast_shown", "true");
-      toast({
-        title: "Unlock More with Founder Access!",
-        description: "Get a verified badge, post richer updates, and more with Founder Access.",
-        action: (
-          <button
-            tabIndex={0}
-            className="ml-3 px-3 py-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold transition-all"
-            onClick={() => {
-              // Route to founder-access tab
-              if (window && window.location && window.location.pathname === "/") {
-                window.location.hash = "#founder-access";
-                // Dispatch custom event for MainContent
-                window.dispatchEvent(new CustomEvent("navigate-founder-access"));
-                // Dismiss the toast
-                dismiss();
-              }
-            }}
-          >
-            Learn More
-          </button>
-        ),
-        duration: 7500,
-      });
-    }
-  }, [checkedInToday, toast, dismiss]);
+  // --- Founder Access Toast logic REMOVED ---
 
   const nextMilestone = currentStreak < 7 ? 7 : currentStreak < 30 ? 30 : currentStreak < 100 ? 100 : 365;
   const progress = (currentStreak / nextMilestone) * 100;
@@ -214,3 +185,4 @@ export function HeroStreakCard({ currentStreak, checkedInToday, onCheckIn }: Her
 }
 
 // ... end of file
+
