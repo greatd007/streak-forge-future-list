@@ -119,24 +119,20 @@ export function StreakTab() {
   const firstDayOfWeek = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // Build calendar days for the month, marking 'completed' up to the streak day
+  // --- Consistency: build daily completion array for month up to today ---
   const buildMonthlyData = () => {
-    // Get streak check-in data from localStorage if available
     const STREAK_COUNT_KEY = "fs_streak_count";
     const CHECKED_IN_KEY = "fs_checked_in_today";
     let streakStored = parseInt(localStorage.getItem(STREAK_COUNT_KEY) || "0", 10);
     const checkedInTodayStr = localStorage.getItem(CHECKED_IN_KEY);
 
-    // If user checked in today, include today; else, only prior days
     let lastCheckin = streakStored;
-    const isTodayChecked =
-      checkedInTodayStr === new Date().toISOString().slice(0, 10);
+    const isTodayChecked = checkedInTodayStr === new Date().toISOString().slice(0, 10);
 
     if (!isTodayChecked && streakStored > 0) {
       lastCheckin = streakStored - 1;
     }
 
-    // Generate data for each day
     const arr: { date: number; completed: boolean }[] = [];
     for (let i = 1; i <= daysInMonth; i++) {
       arr.push({
@@ -148,6 +144,23 @@ export function StreakTab() {
   };
 
   const monthlyData = buildMonthlyData();
+
+  // --- New: Build consistency array for current month (one bar per day) ---
+  // We'll make each "completed" day up to today 100%, missed day 40%, and future 0%
+  const buildConsistencyData = () => {
+    const consistencyArr: number[] = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      if (i > today.getDate()) {
+        consistencyArr.push(0); // future
+      } else if (monthlyData[i - 1]?.completed) {
+        consistencyArr.push(100);
+      } else {
+        consistencyArr.push(40);
+      }
+    }
+    return consistencyArr;
+  };
+  const consistencyData = buildConsistencyData();
 
   // Show onboarding card if isOnboarding === true
   if (isOnboarding) {
@@ -455,19 +468,31 @@ export function StreakTab() {
               <TrendingUp className="w-5 h-5" />
               Consistency Over Time
             </h3>
-            <div className="flex items-end gap-1 h-20">
-              {consistencyData.map((value, index) => (
+            <div className="flex items-end gap-[2px] h-20">
+              {consistencyData.map((value, idx) => (
                 <div
-                  key={index}
-                  className="flex-1 bg-gradient-to-t from-blue-500 to-purple-500 rounded-t"
-                  style={{ height: `${value}%` }}
-                  title={`${value}%`}
-                ></div>
+                  key={idx}
+                  className={`flex-1 rounded-t transition-all duration-300
+                ${value === 100
+                  ? "bg-gradient-to-t from-blue-500 to-green-400"
+                  : value === 40
+                  ? "bg-yellow-400/60"
+                  : "bg-gray-700/20"}
+              `}
+                  style={{ height: `${value}%`, minWidth: "4px", maxWidth: "12px" }}
+                  title={
+                    value === 100
+                      ? `Day ${idx + 1}: Success`
+                      : value === 40
+                      ? `Day ${idx + 1}: Missed`
+                      : `Day ${idx + 1}: Not occurred yet`
+                  }
+                />
               ))}
             </div>
             <div className="flex justify-between text-xs text-gray-400 mt-2">
-              <span>Jan</span>
-              <span>Dec</span>
+              <span>{today.toLocaleString('default', { month: 'short' })} 1</span>
+              <span>{today.toLocaleString('default', { month: 'short' })} {daysInMonth}</span>
             </div>
           </div>
 
