@@ -1,9 +1,9 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar, CheckCircle, Flame, Target, RotateCcw, Trophy, Share, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { MoodCheckIn } from "./MoodCheckIn";
 
 const streakBadges = [
   { name: "First Steps", days: 1, unlocked: true, icon: "🚀" },
@@ -31,6 +31,7 @@ export function StreakTab() {
   const [newCommitment, setNewCommitment] = useState("");
   const [newDuration, setNewDuration] = useState("");
   const [currentStreak, setCurrentStreak] = useState(12);
+  const [showMoodCheckIn, setShowMoodCheckIn] = useState(false);
   
   const longestStreak = 28;
   const consistencyPercentage = 85;
@@ -55,8 +56,25 @@ export function StreakTab() {
   const nextBadge = streakBadges.find(badge => !badge.unlocked);
   const daysUntilNextBadge = nextBadge ? nextBadge.days - currentStreak : 0;
 
+  useEffect(() => {
+    const moodCheckKey = "mood_checkin_date";
+    const today = new Date().toISOString().slice(0, 10);
+    const alreadyChecked = localStorage.getItem(moodCheckKey) === today;
+    // Only show on entry into streak tab if hasGoal & NOT checkedIn & not already shown today
+    if (hasGoal && !checkedIn && !alreadyChecked) {
+      setShowMoodCheckIn(true);
+    }
+  }, [hasGoal, checkedIn]);
+
+  const handleMoodCheckInClose = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    localStorage.setItem("mood_checkin_date", today);
+    setShowMoodCheckIn(false);
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
+      <MoodCheckIn show={showMoodCheckIn} onClose={handleMoodCheckInClose} />
       {/* Header */}
       <div className="sticky top-0 bg-[#0B0B0F]/80 backdrop-blur-md border-b border-gray-800 p-4">
         <div className="flex items-center justify-between">

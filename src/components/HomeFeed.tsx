@@ -1,13 +1,12 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HeroStreakCard } from './HeroStreakCard';
 import { MiniFeedPreview } from './MiniFeedPreview';
-import { MoodCheckIn } from './MoodCheckIn';
 import { MilestoneConfetti } from './MilestoneConfetti';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import FeedSortBar from './FeedSortBar';
 import RightSidebar from './RightSidebar';
+import { MoodCheckIn } from './MoodCheckIn';
 
 export function HomeFeed() {
   const [checkedIn, setCheckedIn] = useState(false);
@@ -45,6 +44,30 @@ export function HomeFeed() {
       };
     }
   }, [checkedIn]);
+
+  // Time-based MoodCheckIn logic
+  useEffect(() => {
+    // Only show MoodCheckIn 5 minutes after load if it hasn't shown today and user is on homepage and NOT checkedIn
+    const moodCheckKey = "mood_checkin_date";
+    const today = new Date().toISOString().slice(0, 10);
+    const alreadyChecked = localStorage.getItem(moodCheckKey) === today;
+    if (!checkedIn && !alreadyChecked) {
+      const timer = setTimeout(() => {
+        // Double-check we're still not already checked in (user could have switched tab)
+        if (!checkedIn && localStorage.getItem(moodCheckKey) !== today) {
+          setShowMoodCheckIn(true);
+        }
+      }, 5 * 60 * 1000); // 5 minutes
+      return () => clearTimeout(timer);
+    }
+  }, [checkedIn]);
+
+  // When mood checkin is shown & confirmed, store date in localStorage
+  const handleMoodCheckInClose = () => {
+    const today = new Date().toISOString().slice(0, 10);
+    localStorage.setItem("mood_checkin_date", today);
+    setShowMoodCheckIn(false);
+  };
 
   return (
     <>
@@ -152,7 +175,7 @@ export function HomeFeed() {
         </div>
 
         {/* Enhanced Modals */}
-        <MoodCheckIn show={showMoodCheckIn} onClose={() => setShowMoodCheckIn(false)} />
+        <MoodCheckIn show={showMoodCheckIn} onClose={handleMoodCheckInClose} />
         <MilestoneConfetti show={showMilestoneConfetti} streakDay={milestoneDay} onClose={() => setShowMilestoneConfetti(false)} />
       </div>
     </>
