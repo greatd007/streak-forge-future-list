@@ -46,8 +46,8 @@ export function HomeFeed() {
     const checkedInToday = checkedInTodayStr && isToday(checkedInTodayStr);
     setCurrentStreak(isNaN(streakStored) ? 0 : streakStored);
     setCheckedIn(!!checkedInToday);
-    // If no streak data at all, show onboarding
-    if (!streakStored || streakStored < 1) {
+    // Refactored: onboarding only true if streakStored is null, not if zero
+    if (localStorage.getItem(STREAK_COUNT_KEY) === null) {
       setOnboardingActive(true);
       setHasCheckedInBefore(false);
     } else {
@@ -135,7 +135,8 @@ export function HomeFeed() {
     }
   }, [checkedIn, onboardingActive]);
 
-  // -- 7. Render onboarding if onboardingActive (UPDATED)
+  // -- 7. Render onboarding only if true AND not in zero streak state
+  // (show onboarding only if explicitly active, not for day 0)
   if (onboardingActive) {
     return (
       <OnboardingScreen
@@ -202,8 +203,21 @@ export function HomeFeed() {
 
       <div className="min-h-screen bg-[#0B0B0F] text-white w-full">
         <div className="flex w-full justify-center">
-          {/* Before Check-In: Focused Mode */}
-          {!checkedIn && (
+          {/* BEFORE ANY CHECK-IN: Show 0 day streak card */}
+          {currentStreak === 0 && !checkedIn && (
+            <div className="flex justify-center items-center min-h-screen w-full">
+              <div className="max-w-lg w-full px-4">
+                <HeroStreakCard
+                  currentStreak={0}
+                  checkedInToday={false}
+                  onCheckIn={handleCheckIn}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Before Check-In (Day 1 and onward): Focused Mode */}
+          {currentStreak > 0 && !checkedIn && (
             <div className="flex justify-center items-center min-h-screen w-full">
               <div className="max-w-lg w-full px-4">
                 <HeroStreakCard
@@ -215,7 +229,7 @@ export function HomeFeed() {
             </div>
           )}
 
-          {/* After Check-In: Engagement Mode with enhanced transitions */}
+          {/* After Check-In: Engagement Mode */}
           {checkedIn && (
             <div className="flex w-full max-w-7xl mx-auto">
               {/* Main Feed Column */}
