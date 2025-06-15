@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Heart, MessageCircle, Repeat2, Share } from "lucide-react";
+import { Heart, MessageCircle, Repeat2, Share, Trophy, Flame, Target } from "lucide-react";
 import { UserBadge, BadgeType } from "./UserBadge";
 
 const mockPosts = [
@@ -41,14 +41,174 @@ const mockPosts = [
   },
 ];
 
+const topBuilders = [
+  { name: "@alexbuilds", streak: 67, badge: "founder" as BadgeType },
+  { name: "@sarahcodes", streak: 45, badge: "investor" as BadgeType },
+  { name: "@mikeship", streak: 38, badge: "influencer" as BadgeType },
+];
+
+const motivationalQuotes = [
+  "You outlived yesterday's doubt.",
+  "Only 1% are still here. You're one of them.",
+  "Shipping beats waiting.",
+  "Your dream hates flakiness.",
+  "Consistency is your superpower.",
+];
+
+const streakHistory = [
+  { day: "Mon", completed: true },
+  { day: "Tue", completed: true },
+  { day: "Wed", completed: false },
+  { day: "Thu", completed: true },
+  { day: "Fri", completed: true },
+  { day: "Sat", completed: true },
+  { day: "Sun", completed: true },
+];
+
 export function HomeFeed() {
   const [postContent, setPostContent] = useState("");
+  const [checkedIn, setCheckedIn] = useState(false);
+  const [currentStreak, setCurrentStreak] = useState(12);
+  const [randomQuote] = useState(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
+
+  const handleCheckIn = () => {
+    setCheckedIn(true);
+    setCurrentStreak(prev => prev + 1);
+    // Add confetti animation trigger here
+  };
+
+  const progressPercentage = (currentStreak / 100) * 100;
 
   return (
     <div className="max-w-2xl mx-auto">
       {/* Header */}
       <div className="sticky top-0 bg-[#0B0B0F]/80 backdrop-blur-md border-b border-gray-800 p-4">
         <h1 className="text-xl font-bold">Home</h1>
+      </div>
+
+      {/* Hero Streak Card */}
+      <div className="p-6 border-b border-gray-800">
+        <div className="bg-gradient-to-br from-orange-500/20 via-red-500/20 to-purple-500/20 border border-orange-500/30 rounded-3xl p-8 text-center relative overflow-hidden">
+          {/* Background glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-3xl blur-xl"></div>
+          
+          <div className="relative z-10">
+            {/* Progress Ring */}
+            <div className="relative w-32 h-32 mx-auto mb-6">
+              <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="50"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  fill="none"
+                  className="text-gray-700"
+                />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="50"
+                  stroke="url(#gradient)"
+                  strokeWidth="8"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray={`${progressPercentage * 3.14} 314`}
+                  className="animate-pulse"
+                />
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FF6633" />
+                    <stop offset="100%" stopColor="#FF3366" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Flame className="w-12 h-12 text-orange-500 animate-pulse" />
+              </div>
+            </div>
+
+            {/* Streak Info */}
+            <h2 className="text-4xl font-bold mb-2">
+              Day {currentStreak} / 100
+            </h2>
+            <p className="text-orange-400 text-lg mb-4">🔥 {currentStreak}-day streak</p>
+            
+            {/* Motivational Quote */}
+            <p className="text-gray-300 italic mb-6 text-lg">"{randomQuote}"</p>
+
+            {/* Streak History */}
+            <div className="flex justify-center gap-2 mb-6">
+              {streakHistory.map((day, index) => (
+                <div key={index} className="text-center">
+                  <div className={`w-3 h-3 rounded-full mb-1 ${
+                    day.completed ? 'bg-green-500' : 'bg-red-500'
+                  }`}></div>
+                  <span className="text-xs text-gray-400">{day.day}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Check-in Button */}
+            {!checkedIn ? (
+              <button
+                onClick={handleCheckIn}
+                className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-200 hover:shadow-lg hover:shadow-orange-500/50 hover:scale-105 animate-pulse"
+              >
+                🔥 Check in Day {currentStreak + 1}
+              </button>
+            ) : (
+              <div className="bg-green-600/20 border border-green-600 text-green-400 font-bold py-4 px-8 rounded-full text-lg flex items-center gap-3 mx-auto w-fit">
+                ✅ Day {currentStreak} secured! 🎉
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Motivation Stats */}
+      <div className="p-4 border-b border-gray-800">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-center">
+            <p className="text-blue-400 font-bold">#3 in your cohort</p>
+            <p className="text-xs text-gray-400">this week</p>
+          </div>
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-3 text-center">
+            <p className="text-purple-400 font-bold">4AM check-in streak: 6</p>
+            <p className="text-xs text-gray-400">early bird</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Mini Leaderboard Preview */}
+      <div className="p-4 border-b border-gray-800">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-yellow-500" />
+            Top Builders
+          </h3>
+          <button className="text-blue-400 hover:text-blue-300 text-sm">
+            See full leaderboard →
+          </button>
+        </div>
+        
+        <div className="space-y-3">
+          {topBuilders.map((builder, index) => (
+            <div key={index} className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-xl">
+              <span className="text-yellow-500 font-bold">#{index + 1}</span>
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-xs font-bold">
+                {builder.name.slice(1, 3).toUpperCase()}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{builder.name}</span>
+                  {builder.badge && <UserBadge type={builder.badge} />}
+                </div>
+              </div>
+              <span className="text-orange-500 font-bold">🔥 {builder.streak}d</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Post Composer */}
@@ -61,13 +221,13 @@ export function HomeFeed() {
             <textarea
               value={postContent}
               onChange={(e) => setPostContent(e.target.value)}
-              placeholder="What did you build today?"
+              placeholder={`Post your Day ${currentStreak} update...`}
               className="w-full bg-transparent text-xl placeholder-gray-500 resize-none outline-none"
-              rows={3}
+              rows={2}
             />
             <div className="flex justify-between items-center mt-3">
               <span className="text-sm text-gray-500">
-                🔥 Your streak: 12 days
+                Share your progress with the community
               </span>
               <button 
                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/25 disabled:opacity-50"
@@ -94,7 +254,9 @@ export function HomeFeed() {
                   {post.badge && <UserBadge type={post.badge} />}
                   <span className="text-gray-500">·</span>
                   <span className="text-gray-500">{post.timestamp}</span>
-                  <span className="text-orange-500 font-medium">🔥 Day {post.streak}</span>
+                  <span className="text-orange-500 font-medium bg-orange-500/10 px-2 py-1 rounded-full text-xs">
+                    🔥 Day {post.streak}
+                  </span>
                 </div>
                 <p className="text-gray-100 mb-3 leading-relaxed">{post.content}</p>
                 <div className="flex items-center justify-between text-gray-500 max-w-md">

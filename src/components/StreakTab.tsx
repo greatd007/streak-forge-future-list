@@ -1,24 +1,39 @@
 
 import { useState } from "react";
-import { Calendar, CheckCircle, Flame, Target, RotateCcw } from "lucide-react";
+import { Calendar, CheckCircle, Flame, Target, RotateCcw, Trophy, Share, TrendingUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
+const streakBadges = [
+  { name: "First Steps", days: 1, unlocked: true, icon: "🚀" },
+  { name: "Week Warrior", days: 7, unlocked: true, icon: "⚡" },
+  { name: "Consistency King", days: 14, unlocked: false, icon: "👑" },
+  { name: "Month Master", days: 30, unlocked: false, icon: "🏆" },
+  { name: "Centurion", days: 100, unlocked: false, icon: "💎" },
+];
+
+const monthlyData = [
+  { date: 1, completed: true }, { date: 2, completed: true }, { date: 3, completed: false },
+  { date: 4, completed: true }, { date: 5, completed: true }, { date: 6, completed: true },
+  { date: 7, completed: true }, { date: 8, completed: false }, { date: 9, completed: true },
+  { date: 10, completed: true }, { date: 11, completed: true }, { date: 12, completed: true },
+  { date: 13, completed: true }, { date: 14, completed: false }, { date: 15, completed: true },
+];
+
+const consistencyData = [65, 72, 78, 85, 88, 92, 95, 89, 93, 96, 98, 85];
+
 export function StreakTab() {
   const [checkedIn, setCheckedIn] = useState(false);
-  const [hasGoal, setHasGoal] = useState(false); // Changed to false to show initial state
+  const [hasGoal, setHasGoal] = useState(true);
   const [commitment, setCommitment] = useState("Ship daily");
   const [duration, setDuration] = useState("30");
   const [newCommitment, setNewCommitment] = useState("");
   const [newDuration, setNewDuration] = useState("");
-  const [currentStreak, setCurrentStreak] = useState(0); // Start at 0 for new streaks
+  const [currentStreak, setCurrentStreak] = useState(12);
   
   const longestStreak = 28;
-
-  const recentActivity = [
-    { date: "Today", status: "pending" },
-  ];
+  const consistencyPercentage = 85;
 
   const handleCheckIn = () => {
     setCheckedIn(true);
@@ -32,24 +47,13 @@ export function StreakTab() {
       setHasGoal(true);
       setNewCommitment("");
       setNewDuration("");
-      setCurrentStreak(0); // Reset streak when setting new goal
-      setCheckedIn(false); // Reset check-in status
+      setCurrentStreak(0);
+      setCheckedIn(false);
     }
   };
 
-  const handleEditGoal = () => {
-    setNewCommitment(commitment);
-    setNewDuration(duration);
-    setHasGoal(false);
-  };
-
-  const handleStartNewStreak = () => {
-    setHasGoal(false);
-    setCheckedIn(false);
-    setNewCommitment("");
-    setNewDuration("");
-    setCurrentStreak(0); // Reset streak count
-  };
+  const nextBadge = streakBadges.find(badge => !badge.unlocked);
+  const daysUntilNextBadge = nextBadge ? nextBadge.days - currentStreak : 0;
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -57,22 +61,32 @@ export function StreakTab() {
       <div className="sticky top-0 bg-[#0B0B0F]/80 backdrop-blur-md border-b border-gray-800 p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">Streak</h1>
-          {!hasGoal && (
+          <div className="flex gap-2">
             <Button
-              onClick={handleStartNewStreak}
               variant="outline"
               size="sm"
               className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 flex items-center gap-2"
             >
-              <RotateCcw className="w-4 h-4" />
-              Start New Streak
+              <Share className="w-4 h-4" />
+              Share
             </Button>
-          )}
+            {hasGoal && (
+              <Button
+                onClick={() => setHasGoal(false)}
+                variant="outline"
+                size="sm"
+                className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 flex items-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Reset
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Set Your Streak Goal */}
       {!hasGoal ? (
+        // Goal Setting
         <div className="p-6 border-b border-gray-800">
           <div className="bg-gray-900 rounded-2xl p-6">
             <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
@@ -86,7 +100,7 @@ export function StreakTab() {
                   What are you committing to?
                 </label>
                 <Input
-                  placeholder="e.g., Ship every day, Write daily, Code 1 hour/day, Reach $1K MRR"
+                  placeholder="e.g., Ship every day, Write daily, Code 1 hour/day"
                   value={newCommitment}
                   onChange={(e) => setNewCommitment(e.target.value)}
                   className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
@@ -122,127 +136,170 @@ export function StreakTab() {
         </div>
       ) : (
         <>
-          {/* Current Streak Goal Display */}
-          <div className="p-6 border-b border-gray-800">
-            <div className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 border border-blue-500/30 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold">Your Goal</h3>
-                <Button
-                  onClick={handleEditGoal}
-                  variant="ghost"
-                  size="sm"
-                  className="text-blue-400 hover:text-blue-300"
-                >
-                  Edit
-                </Button>
+          {/* Main Streak Display */}
+          <div className="p-6 text-center border-b border-gray-800">
+            <div className="bg-gradient-to-br from-orange-500/20 via-red-500/20 to-purple-500/20 border border-orange-500/30 rounded-3xl p-8 mb-6">
+              <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-6 shadow-lg shadow-orange-500/25 relative">
+                <Flame className="w-16 h-16 text-white" />
+                <div className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                  {currentStreak}
+                </div>
               </div>
-              <p className="text-xl font-medium">
-                {currentStreak === 0 ? (
-                  <>🚀 Ready to start your {duration}-day journey: <span className="text-blue-400 font-bold">"{commitment}"</span></>
-                ) : (
-                  <>🔥 You're on a {currentStreak}-day streak toward your {duration}-day build goal: <span className="text-blue-400 font-bold">"{commitment}"</span></>
-                )}
+              
+              <h2 className="text-4xl font-bold mb-2">
+                🔥 {currentStreak}-day streak
+              </h2>
+              
+              <p className="text-blue-400 font-bold text-lg mb-4">
+                "{commitment}" for {duration} days
               </p>
-              <div className="mt-4 bg-gray-800 rounded-full h-2">
+              
+              <div className="bg-gray-800 rounded-full h-3 mb-2">
                 <div 
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-300"
                   style={{ width: `${(currentStreak / parseInt(duration)) * 100}%` }}
                 ></div>
               </div>
-              <p className="text-sm text-gray-400 mt-2">
-                {currentStreak} of {duration} days completed ({Math.round((currentStreak / parseInt(duration)) * 100)}%)
+              <p className="text-sm text-gray-400">
+                {currentStreak} of {duration} days ({Math.round((currentStreak / parseInt(duration)) * 100)}%)
               </p>
             </div>
-          </div>
 
-          {/* Main Streak Display */}
-          <div className="p-6 text-center border-b border-gray-800">
-            <div className="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-6 shadow-lg shadow-orange-500/25">
-              <Flame className="w-16 h-16 text-white" />
-            </div>
-            <h2 className="text-4xl font-bold mb-2">
-              {currentStreak === 0 ? "🚀 Start your streak!" : `🔥 ${currentStreak}-day streak`}
-            </h2>
-            <p className="text-gray-400 mb-6">
-              {currentStreak === 0 ? (
-                "Take your first step towards building consistency!"
-              ) : (
-                `Keep building! Your longest streak was ${longestStreak} days.`
-              )}
-            </p>
-            
             {!checkedIn ? (
               <button
                 onClick={handleCheckIn}
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-200 hover:shadow-lg hover:shadow-green-500/25 flex items-center gap-3 mx-auto"
+                className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-200 hover:shadow-lg hover:shadow-green-500/25 flex items-center gap-3 mx-auto hover:scale-105"
               >
                 <CheckCircle className="w-6 h-6" />
-                {currentStreak === 0 ? "Start your streak! ✅" : "Check in today ✅"}
+                Check in Day {currentStreak + 1} ✅
               </button>
             ) : (
               <div className="bg-green-600/20 border border-green-600 text-green-400 font-bold py-4 px-8 rounded-full text-lg flex items-center gap-3 mx-auto w-fit">
                 <CheckCircle className="w-6 h-6" />
-                {currentStreak === 1 ? "Great start! 🎉" : "Checked in! 🎉"}
+                Day {currentStreak} completed! 🎉
               </div>
             )}
           </div>
-        </>
-      )}
 
-      {/* Streak History */}
-      {hasGoal && (
-        <div className="p-6">
-          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5" />
-            Recent Activity
-          </h3>
-          <div className="space-y-3">
-            {recentActivity.map((day, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 bg-gray-900 rounded-lg"
-              >
-                <span className="font-medium">{day.date}</span>
-                <div className="flex items-center gap-2">
-                  {day.status === "completed" && (
-                    <>
-                      <CheckCircle className="w-5 h-5 text-green-500" />
-                      <span className="text-green-500 font-medium">Completed</span>
-                    </>
-                  )}
-                  {day.status === "pending" && (
-                    <>
-                      <div className="w-5 h-5 border-2 border-gray-500 rounded-full"></div>
-                      <span className="text-gray-500 font-medium">Pending</span>
-                    </>
-                  )}
-                  {day.status === "missed" && (
-                    <>
-                      <div className="w-5 h-5 bg-red-500 rounded-full"></div>
-                      <span className="text-red-500 font-medium">Missed</span>
-                    </>
-                  )}
+          {/* Stats Cards */}
+          <div className="p-6 border-b border-gray-800">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-2xl p-4 text-center">
+                <p className="text-3xl font-bold text-orange-500 mb-1">{currentStreak}</p>
+                <p className="text-gray-400 text-sm">Current Streak</p>
+              </div>
+              <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/30 rounded-2xl p-4 text-center">
+                <p className="text-3xl font-bold text-green-500 mb-1">{longestStreak}</p>
+                <p className="text-gray-400 text-sm">Longest Streak</p>
+              </div>
+              <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-2xl p-4 text-center">
+                <p className="text-3xl font-bold text-purple-500 mb-1">{consistencyPercentage}%</p>
+                <p className="text-gray-400 text-sm">Consistency</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Next Badge Alert */}
+          {nextBadge && (
+            <div className="p-4 border-b border-gray-800">
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-center gap-3">
+                <div className="text-2xl">{nextBadge.icon}</div>
+                <div className="flex-1">
+                  <p className="font-bold text-yellow-400">
+                    {daysUntilNextBadge} more days until "{nextBadge.name}" badge!
+                  </p>
+                  <p className="text-sm text-gray-400">Keep going to unlock this milestone</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          )}
 
-      {/* Motivational Messages */}
-      {hasGoal && (
-        <div className="p-6 border-t border-gray-800">
-          <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-500/30 rounded-2xl p-6">
-            <h3 className="text-lg font-bold mb-2">💪 Keep Going!</h3>
-            <p className="text-gray-300">
-              {currentStreak === 0 ? (
-                "Every expert was once a beginner. Take that first step and start building your streak today! 🎯"
-              ) : (
-                `You're doing amazing! Consistency is the key to success. Just ${parseInt(duration) - currentStreak} more days to reach your ${duration}-day milestone! 🎯`
-              )}
-            </p>
+          {/* Streak Badges */}
+          <div className="p-6 border-b border-gray-800">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-yellow-500" />
+              Streak Badges
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {streakBadges.map((badge, index) => (
+                <div
+                  key={index}
+                  className={`p-4 rounded-xl border text-center transition-all ${
+                    badge.unlocked
+                      ? "bg-yellow-500/10 border-yellow-500/30 hover:bg-yellow-500/20"
+                      : "bg-gray-800 border-gray-700 opacity-50"
+                  }`}
+                >
+                  <div className="text-2xl mb-2">{badge.icon}</div>
+                  <p className={`font-bold text-sm ${badge.unlocked ? "text-yellow-400" : "text-gray-500"}`}>
+                    {badge.name}
+                  </p>
+                  <p className="text-xs text-gray-400">{badge.days} days</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+
+          {/* Monthly Calendar View */}
+          <div className="p-6 border-b border-gray-800">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              This Month
+            </h3>
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="text-center text-xs text-gray-400 p-2">
+                  {day}
+                </div>
+              ))}
+              {monthlyData.map((day, index) => (
+                <div
+                  key={index}
+                  className={`aspect-square rounded-lg flex items-center justify-center text-sm font-medium ${
+                    day.completed
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500/20 border border-red-500/30 text-red-400"
+                  }`}
+                >
+                  {day.date}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Consistency Graph */}
+          <div className="p-6 border-b border-gray-800">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" />
+              Consistency Over Time
+            </h3>
+            <div className="flex items-end gap-1 h-20">
+              {consistencyData.map((value, index) => (
+                <div
+                  key={index}
+                  className="flex-1 bg-gradient-to-t from-blue-500 to-purple-500 rounded-t"
+                  style={{ height: `${value}%` }}
+                  title={`${value}%`}
+                ></div>
+              ))}
+            </div>
+            <div className="flex justify-between text-xs text-gray-400 mt-2">
+              <span>Jan</span>
+              <span>Dec</span>
+            </div>
+          </div>
+
+          {/* Motivational Section */}
+          <div className="p-6">
+            <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-500/30 rounded-2xl p-6">
+              <h3 className="text-lg font-bold mb-2">💪 Keep Going!</h3>
+              <p className="text-gray-300">
+                You're in the top 5% of builders who make it past day 10. 
+                Just {parseInt(duration) - currentStreak} more days to reach your {duration}-day milestone! 🎯
+              </p>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
