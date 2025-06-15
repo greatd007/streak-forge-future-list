@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { HeroStreakCard } from './HeroStreakCard';
 import { MiniFeedPreview } from './MiniFeedPreview';
@@ -34,14 +33,35 @@ export function HomeFeed() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [showMotivationModal, setShowMotivationModal] = useState(false);
 
-  // -- 1. Load streak and checkin state
+  // For "insane" onboarding animation synchronization:
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [playOnboardingAnim, setPlayOnboardingAnim] = useState(false);
+
+  // -- 1. Load streak and checkin state, handle onboarding state
   useEffect(() => {
     const streakStored = parseInt(localStorage.getItem(STREAK_COUNT_KEY) || "0", 10);
     const checkedInTodayStr = localStorage.getItem(CHECKED_IN_KEY);
     const checkedInToday = checkedInTodayStr && isToday(checkedInTodayStr);
     setCurrentStreak(isNaN(streakStored) ? 0 : streakStored);
     setCheckedIn(!!checkedInToday);
+
+    // Show onboarding only if Day 0 and not checked in
+    if ((isNaN(streakStored) || streakStored === 0) && !checkedInToday) {
+      setShowOnboarding(true);
+    }
   }, []);
+
+  // Onboarding CTA
+  const handleStartStreak = () => {
+    // Play onboarding "insane" animation:
+    setPlayOnboardingAnim(true);
+    // Wait for core animation/effects, then trigger check-in flow...
+    setTimeout(() => {
+      setPlayOnboardingAnim(false);
+      setShowOnboarding(false);
+      handleCheckIn(); // This triggers Day 1, mood check, feed reveal, etc.
+    }, 1800); // Should be a bit longer than streak orb + confetti animation
+  };
 
   // -- 2. Standard check-in flow 
   const handleCheckIn = () => {
@@ -100,6 +120,18 @@ export function HomeFeed() {
     }
   }, [checkedIn]);
 
+  // OVERRIDE: after check-in, always fire onboarding toast if user just started
+  useEffect(() => {
+    if (checkedIn && currentStreak === 1) {
+      // Show "Day 1 secured" toast only on first streak day (after onboarding card)
+      if (toast) {
+        toast({
+          title: "🔥 Day 1 secured. You’re officially in.",
+        });
+      }
+    }
+  }, [checkedIn, currentStreak, toast]);
+
   // -- Render
   return (
     <>
@@ -107,6 +139,7 @@ export function HomeFeed() {
         show={showMotivationModal}
         onClose={() => setShowMotivationModal(false)}
       />
+
       <style>{`
         @keyframes slideUpFade {
           from {
@@ -152,12 +185,81 @@ export function HomeFeed() {
         .streak-fade-out {
           animation: streakCardFade 800ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
+        @keyframes onboardingScalePop {
+          0% { transform: scale(0.96) translateY(40px); opacity: 0 }
+          60% { transform: scale(1.05) translateY(-8px); opacity: 1 }
+          100% { transform: scale(1) translateY(0); opacity: 1 }
+        }
+        .onboarding-scale-pop { animation: onboardingScalePop 1s cubic-bezier(.7,.05,.4,1.2) forwards; }
       `}</style>
 
       <div className="min-h-screen bg-[#0B0B0F] text-white w-full">
         <div className="flex w-full justify-center">
-          {/* Show 0 day streak card when not checked in */}
-          {currentStreak === 0 && !checkedIn && (
+          {/* --- ONBOARDING DAY 0 CARD --- */}
+          {showOnboarding && (
+            <div className="flex justify-center items-center min-h-screen w-full">
+              <div className="max-w-md w-full px-6">
+                <div className="bg-gradient-to-br from-orange-500/10 via-red-500/12 to-purple-600/8 border-2 border-orange-500/25 rounded-3xl p-9 text-center relative shadow-2xl onboarding-scale-pop">
+                  {/* Animated FLAME and/or progress orb */}
+                  <div className="mb-7 flex flex-col items-center gap-1">
+                    {/* Use 3D orb w/ zero progress, play ignite/pulse if animating */}
+                    <div className={`transition-transform duration-700 ${playOnboardingAnim ? "scale-110" : ""}`}>
+                      <div className="relative">
+                        <div className={`transition-all duration-800 ${playOnboardingAnim ? "animate-pulse" : ""}`}>
+                          {/* Use StreakOrb3D, force progress 100 if animating */}
+                          <div className="mb-2">
+                            <span className="block text-[3.75rem] select-none drop-shadow-lg" style={{filter: 'blur(0.5px)'}} role="img">🔥</span>
+                          </div>
+                        </div>
+                        {/* Confetti pop-on-CTA */}
+                        {playOnboardingAnim && (
+                          <div className="absolute inset-0 pointer-events-none z-20">
+                            {[...Array(24)].map((_, i) => (
+                              <div
+                                key={i}
+                                className="absolute"
+                                style={{
+                                  left: `${50 + (Math.random() - 0.5) * 80}%`,
+                                  top: `${48 + (Math.random() - 0.5) * 36}%`,
+                                  animation: `confettiPop 1.6s cubic-bezier(.5,1.6,.32,1) both`,
+                                  animationDelay: `${Math.random()*0.5}s`,
+                                  fontSize: '1.4rem',
+                                  filter: 'blur(0.2px)'
+                                }}
+                              >
+                                {["🎉", "🔥", "✨", "⭐", "👑"][Math.floor(Math.random()*5)]}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Card Content */}
+                  <div className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent select-none">
+                    Day 0 — You haven’t started yet.
+                  </div>
+                  <div className="text-base text-gray-300 mb-8">
+                    Show up once. That’s Day 1.
+                  </div>
+                  <button
+                    className={`w-full py-4 rounded-xl text-lg font-bold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 transition-all hover:scale-105 active:scale-95 duration-300 shadow-lg shadow-orange-500/30 ring-1 ring-orange-400/20 focus:outline-none focus:ring-2 focus:ring-orange-400/70 focus:ring-offset-2`}
+                    disabled={playOnboardingAnim}
+                    onClick={handleStartStreak}
+                  >
+                    {playOnboardingAnim ? (
+                      <span className="animate-pulse">Starting…</span>
+                    ) : (
+                      "Start My Streak"
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* --- LEGACY STREAK CARD LOGIC (for post-onboarding) --- */}
+          {!showOnboarding && currentStreak === 0 && !checkedIn && (
             <div className="flex justify-center items-center min-h-screen w-full">
               <div className="max-w-lg w-full px-4">
                 <HeroStreakCard
@@ -169,7 +271,6 @@ export function HomeFeed() {
             </div>
           )}
 
-          {/* Focused Mode for subsequent days before check-in */}
           {currentStreak > 0 && !checkedIn && (
             <div className="flex justify-center items-center min-h-screen w-full">
               <div className="max-w-lg w-full px-4">
