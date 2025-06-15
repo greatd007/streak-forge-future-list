@@ -1,3 +1,4 @@
+
 import {
   Sidebar,
   SidebarContent,
@@ -7,51 +8,39 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Bell } from "lucide-react"; // <-- Import the bell icon
+import { X } from "lucide-react";
 
 const menuItems = [
   {
-    title: "🏠 Home",
+    title: "Home",
     key: "home",
   },
   {
-    title: "🔥 Streak",
+    title: "Streak",
     key: "streak",
   },
   {
-    title: "💡 Idea Bank",
+    title: "Idea Bank",
     key: "idea-bank",
   },
   {
-    title: "🏆 Leaderboard",
+    title: "Leaderboard",
     key: "leaderboard",
   },
-  // Add Founder Access tab with 💎 emoji
   {
-    title: (
-      <span className="flex items-center gap-2">
-        <span role="img" aria-label="Founder Access" className="text-xl">💎</span>
-        Founder Access
-      </span>
-    ),
+    title: "Founder Access",
     key: "founder-access",
   },
-  // Notifications tab with 🔔 emoji
   {
-    title: (
-      <span className="flex items-center gap-2">
-        <span role="img" aria-label="Notifications" className="text-xl">🔔</span>
-        Notifications
-      </span>
-    ),
+    title: "Notifications",
     key: "notifications",
   },
   {
-    title: "👤 Profile",
+    title: "Profile",
     key: "profile",
   },
   {
-    title: "⚙️ Settings",
+    title: "Settings",
     key: "settings",
   },
 ];
@@ -73,7 +62,7 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
           <SidebarGroupContent>
             <SidebarMenu className="space-y-2">
               {menuItems.map((item) => (
-                <SidebarMenuItem key={typeof item.title === "string" ? item.key : item.key}>
+                <SidebarMenuItem key={item.key}>
                   <SidebarMenuButton
                     asChild
                     isActive={activeTab === item.key}
@@ -83,6 +72,7 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
                       onClick={() => onTabChange?.(item.key)}
                       className="flex items-center gap-4 w-full text-white hover:text-white"
                     >
+                      <X className="w-5 h-5" />
                       <span className="font-medium">{item.title}</span>
                     </button>
                   </SidebarMenuButton>
@@ -95,3 +85,4 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
     </Sidebar>
   );
 }
+

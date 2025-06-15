@@ -1,33 +1,33 @@
 
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 const menuItems = [
   {
-    title: "🏠 Home",
+    title: "Home",
     key: "home",
   },
   {
-    title: "🔥 Streak",
+    title: "Streak",
     key: "streak",
   },
   {
-    title: "💡 Idea Bank",
+    title: "Idea Bank",
     key: "idea-bank",
   },
   {
-    title: "🏆 Leaderboard",
+    title: "Leaderboard",
     key: "leaderboard",
   },
   {
-    title: "🏅 Founder Access",
+    title: "Founder Access",
     key: "founder-access",
   },
   {
-    title: "👤 Profile",
+    title: "Profile",
     key: "profile",
   },
   {
-    title: "⚙️ Settings",
+    title: "Settings",
     key: "settings",
   },
 ];
@@ -50,13 +50,14 @@ export function MobileMenu({ activeTab, onTabChange }: MobileMenuProps) {
             <button
               key={item.key}
               onClick={() => onTabChange(item.key)}
-              className={`w-full text-left px-4 py-3 rounded-full text-lg transition-colors ${
+              className={`w-full text-left px-4 py-3 rounded-full text-lg transition-colors flex items-center gap-4 ${
                 activeTab === item.key
                   ? "bg-gray-900 font-bold text-white"
                   : "text-white hover:bg-gray-900 hover:text-white"
               }`}
             >
-              {item.title}
+              <X className="w-5 h-5" />
+              <span>{item.title}</span>
             </button>
           ))}
         </div>
@@ -71,3 +72,4 @@ export function MobileMenu({ activeTab, onTabChange }: MobileMenuProps) {
     </div>
   );
 }
+
