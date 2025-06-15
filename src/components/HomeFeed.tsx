@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { HeroStreakCard } from './HeroStreakCard';
 import { MiniFeedPreview } from './MiniFeedPreview';
 import { CompactStatsCards } from './CompactStatsCards';
@@ -45,7 +46,6 @@ export function HomeFeed() {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto space-y-8">
-
           {/* Hero Streak Card - Main Focus */}
           <HeroStreakCard
             currentStreak={currentStreak}
@@ -60,10 +60,12 @@ export function HomeFeed() {
             weeklyRank={3}
           />
 
-          {/* Mini Feed Preview - Make scrollable here */}
-          <ScrollArea className="max-h-72 rounded-xl">
-            <MiniFeedPreview />
-          </ScrollArea>
+          {/* Mini Feed Preview - Scrollable like X/Twitter */}
+          <div className="rounded-xl border border-gray-800 bg-[#101017] shadow-lg overflow-hidden" style={{height: '520px', maxHeight: '70vh', minHeight: '350px'}}>
+            <ScrollArea className="h-full">
+              <MiniFeedPreview />
+            </ScrollArea>
+          </div>
         </div>
       </div>
 
@@ -81,3 +83,4 @@ export function HomeFeed() {
     </div>
   );
 }
+
