@@ -31,12 +31,13 @@ export function HeroStreakCard({ currentStreak, checkedInToday, onCheckIn }: Her
             tabIndex={0}
             className="ml-3 px-3 py-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold transition-all"
             onClick={() => {
-              // Try to route to founder-access tab
+              // Route to founder-access tab
               if (window && window.location && window.location.pathname === "/") {
                 window.location.hash = "#founder-access";
+                // Dispatch custom event for MainContent
+                window.dispatchEvent(new CustomEvent("navigate-founder-access"));
                 // Dismiss the toast
                 dismiss();
-                // Optionally: trigger synthetic event for MainContent if needed
               }
             }}
           >

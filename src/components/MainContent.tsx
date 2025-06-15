@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { HomeFeed } from "./HomeFeed";
 import { StreakTab } from "./StreakTab";
@@ -12,6 +12,17 @@ import { NotificationsTab } from "./NotificationsTab";
 
 export function MainContent() {
   const [activeTab, setActiveTab] = useState("home");
+
+  // Add effect to listen for founder-access navigation events
+  useEffect(() => {
+    function handleFounderAccessNav() {
+      setActiveTab("founder-access");
+    }
+    window.addEventListener("navigate-founder-access", handleFounderAccessNav);
+    return () => {
+      window.removeEventListener("navigate-founder-access", handleFounderAccessNav);
+    };
+  }, []);
 
   const renderActiveTab = () => {
     switch (activeTab) {
