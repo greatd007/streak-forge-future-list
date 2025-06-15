@@ -8,6 +8,7 @@ import { LeaderboardTab } from "./LeaderboardTab";
 import { ProfileTab } from "./ProfileTab";
 import { SettingsTab } from "./SettingsTab";
 import { FounderAccessTab } from "./FounderAccessTab";
+import { AppSidebar } from "./AppSidebar";
 
 export function MainContent() {
   const [activeTab, setActiveTab] = useState("home");
@@ -35,8 +36,8 @@ export function MainContent() {
 
   return (
     <div className="flex w-full min-h-screen bg-black">
+      <AppSidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="w-full flex flex-col">
-        {/* Sidebar trigger for mobile/desktop */}
         <div className="p-4">
           <SidebarTrigger />
         </div>
