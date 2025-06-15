@@ -1,4 +1,3 @@
-
 import { Plus, X } from "lucide-react";
 
 const menuItems = [
@@ -71,7 +70,6 @@ export function MobileMenu({ activeTab, onTabChange }: MobileMenuProps) {
               >
                 {item.emoji}
               </span>
-              <X className="w-5 h-5 text-white" />
               <span>{item.title}</span>
             </button>
           ))}

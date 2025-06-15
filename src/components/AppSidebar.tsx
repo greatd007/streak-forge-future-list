@@ -1,4 +1,3 @@
-
 import {
   Sidebar,
   SidebarContent,
@@ -87,7 +86,6 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
                       >
                         {item.emoji}
                       </span>
-                      <X className="w-5 h-5 text-white" />
                       <span className="font-medium">{item.title}</span>
                     </button>
                   </SidebarMenuButton>
