@@ -33,6 +33,9 @@ export function HomeFeed() {
   // Animation reveal
   const [showFeed, setShowFeed] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showMotivationModal, setShowMotivationModal] = useState(false);
+  // For toast
+  const { toast } = require("@/hooks/use-toast"); // React hook OK to use like this for side effect
 
   // -- 1. Load onboarding state, streak, checkin state
   useEffect(() => {
@@ -70,9 +73,8 @@ export function HomeFeed() {
     }
   };
 
-  // -- 3. Onboarding CTA: Start Day 1
+  // -- 3. Onboarding CTA: Start Day 1 (updated for new onboarding)
   const handleStartDay1 = () => {
-    // Animate streak card just like a check-in
     setOnboardingAnimating(true);
     setTimeout(() => {
       // Register first day
@@ -83,14 +85,22 @@ export function HomeFeed() {
       localStorage.setItem(CHECKED_IN_KEY, new Date().toISOString().slice(0, 10));
       setTimeout(() => {
         setOnboardingAnimating(false);
-        // Staggered reveal (same as normal checked-in)
         setShowFeed(false);
         setShowSidebar(false);
         setTimeout(() => setShowFeed(true), 800);
         setTimeout(() => setShowSidebar(true), 1200);
         setShowMoodCheckIn(true);
-      }, 1800); // Allow onboarding animation time (aligned to streak card)
-    }, 700); // Delay to allow button "Start Day 1" animation in
+        // Show motivational modal after Day 1 is secured
+        setShowMotivationModal(true);
+        // Show toast as soon as Day 1 is in
+        if (toast) {
+          toast({
+            title: "Day 1 secured.",
+            description: "Congrats on starting your streak!",
+          });
+        }
+      }, 1800); // Allow onboarding animation time
+    }, 700); // Delay for button
   };
 
   // -- 4. Mood Check-in logic (unchanged except streak state now local)
@@ -127,7 +137,7 @@ export function HomeFeed() {
     }
   }, [checkedIn, onboardingActive]);
 
-  // -- 7. Render onboarding if onboardingActive
+  // -- 7. Render onboarding if onboardingActive (UPDATED)
   if (onboardingActive) {
     return (
       <div className="min-h-screen bg-[#0B0B0F] flex flex-col justify-center items-center w-full">
@@ -171,7 +181,7 @@ export function HomeFeed() {
               rounded-3xl p-10 text-center shadow-2xl border-2 border-orange-500/30 relative transition-all duration-700
               ${onboardingAnimating ? "onboarding-glow anim" : "onboarding-glow"}`}>
             {/* Flame mascot/graphic */}
-            <div className="flex flex-col items-center mb-7 relative">
+            <div className="flex flex-col items-center mb-8 relative">
               <div className={`w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-tr from-orange-600 via-orange-500 to-red-500 shadow-xl
                   ${onboardingAnimating ? "big-flame-animate" : ""}`}>
                 <span className="text-5xl drop-shadow-lg">🔥</span>
@@ -195,25 +205,48 @@ export function HomeFeed() {
                 </div>
               )}
             </div>
-            <div className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent select-none">Start your streak today</div>
-            <div className="text-lg text-gray-300 mb-7">Show up once. That’s Day 1.</div>
-            <Button
-              size="lg"
-              className={`w-full py-4 rounded-xl text-lg font-bold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 transition-all hover:scale-105 active:scale-95 duration-300 shadow-lg shadow-orange-500/20`}
+            {/* HEADLINE */}
+            <div className="text-2xl md:text-3xl font-extrabold mb-2 bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent select-none">
+              Build your streak. Don’t disappear.
+            </div>
+            {/* SUBLINE */}
+            <div className="text-base md:text-lg text-gray-300 mb-8">Check in once a day. We’ll track your momentum.</div>
+            <button
+              className="w-full py-4 rounded-xl text-lg font-bold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 transition-all hover:scale-105 active:scale-95 duration-300 shadow-lg shadow-orange-500/20"
               disabled={onboardingAnimating}
               onClick={handleStartDay1}
             >
-              Start Day 1
-            </Button>
+              Start My Streak
+            </button>
           </div>
         </div>
       </div>
     );
   }
 
+  // -- 9. Show Motivation Modal after Day 1 check-in
+  const MotivationModal = () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0B0F]/80 backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-purple-900/80 to-blue-900/80 border border-blue-700 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-fade-in">
+        <div className="text-2xl font-bold mb-4 bg-gradient-to-r from-yellow-300 via-orange-400 to-purple-400 bg-clip-text text-transparent">
+          Most give up in silence.<br />
+          You didn’t.<br />
+          Welcome to Day 1.
+        </div>
+        <button
+          className="mt-6 py-3 px-7 rounded-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-lg transition-all hover:scale-105 active:scale-95"
+          onClick={() => setShowMotivationModal(false)}
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  );
+
   // -- 8. Regular main homefeed UI 
   return (
     <>
+      {showMotivationModal && <MotivationModal />}
       <style>{`
         @keyframes slideUpFade {
           from {
