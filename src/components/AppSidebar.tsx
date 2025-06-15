@@ -26,6 +26,16 @@ const menuItems = [
     title: "🏆 Leaderboard",
     key: "leaderboard",
   },
+  // Add Founder Access tab with 💎 emoji
+  {
+    title: (
+      <span className="flex items-center gap-2">
+        <span role="img" aria-label="Founder Access" className="text-xl">💎</span>
+        Founder Access
+      </span>
+    ),
+    key: "founder-access",
+  },
   // Notifications tab with 🔔 emoji
   {
     title: (
