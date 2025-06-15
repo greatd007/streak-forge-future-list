@@ -8,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Bell } from "lucide-react"; // <-- Import the bell icon
 
 const menuItems = [
   {
@@ -25,6 +26,16 @@ const menuItems = [
   {
     title: "🏆 Leaderboard",
     key: "leaderboard",
+  },
+  // New Notifications tab with a bell icon
+  {
+    title: (
+      <span className="flex items-center gap-2">
+        <Bell className="w-5 h-5" />
+        Notifications
+      </span>
+    ),
+    key: "notifications",
   },
   {
     title: "👤 Profile",
@@ -53,7 +64,7 @@ export function AppSidebar({ activeTab = "home", onTabChange }: AppSidebarProps)
           <SidebarGroupContent>
             <SidebarMenu className="space-y-2">
               {menuItems.map((item) => (
-                <SidebarMenuItem key={item.key}>
+                <SidebarMenuItem key={typeof item.title === "string" ? item.key : item.key}>
                   <SidebarMenuButton
                     asChild
                     isActive={activeTab === item.key}
