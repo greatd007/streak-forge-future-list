@@ -7,7 +7,9 @@ import { Button } from './ui/button';
 import FeedSortBar from './FeedSortBar';
 import RightSidebar from './RightSidebar';
 import { MoodCheckIn } from './MoodCheckIn';
-import { toast } from "@/hooks/use-toast"; // <-- FIXED HERE
+import { toast } from "@/hooks/use-toast";
+import { OnboardingScreen } from "./OnboardingScreen";
+import { MotivationModal } from "./MotivationModal";
 
 // Helper keys
 const STREAK_COUNT_KEY = "fs_streak_count";
@@ -35,8 +37,6 @@ export function HomeFeed() {
   const [showFeed, setShowFeed] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const [showMotivationModal, setShowMotivationModal] = useState(false);
-  // For toast
-  // const { toast } = require("@/hooks/use-toast"); // React hook OK to use like this for side effect
 
   // -- 1. Load onboarding state, streak, checkin state
   useEffect(() => {
@@ -78,7 +78,6 @@ export function HomeFeed() {
   const handleStartDay1 = () => {
     setOnboardingAnimating(true);
     setTimeout(() => {
-      // Register first day
       setOnboardingActive(false);
       setCheckedIn(true);
       setCurrentStreak(1);
@@ -91,9 +90,7 @@ export function HomeFeed() {
         setTimeout(() => setShowFeed(true), 800);
         setTimeout(() => setShowSidebar(true), 1200);
         setShowMoodCheckIn(true);
-        // Show motivational modal after Day 1 is secured
         setShowMotivationModal(true);
-        // Show toast as soon as Day 1 is in
         if (toast) {
           toast({
             title: "Day 1 secured.",
@@ -141,113 +138,21 @@ export function HomeFeed() {
   // -- 7. Render onboarding if onboardingActive (UPDATED)
   if (onboardingActive) {
     return (
-      <div className="min-h-screen bg-[#0B0B0F] flex flex-col justify-center items-center w-full">
-        <style>{`
-          @keyframes streakIntroAppear {
-            0% { opacity: 0; transform: scale(0.96) translateY(18px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-          }
-          .streak-intro-appear {
-            animation: streakIntroAppear 0.7s cubic-bezier(0.4,0,0.2,1) forwards;
-          }
-          .onboarding-glow {
-            box-shadow: 0 0 60px 10px rgba(249, 115, 22, 0.20),
-                        0 0 92px 6px rgba(30, 64, 175, 0.18);
-            transition: box-shadow 600ms;
-          }
-          .onboarding-glow.anim {
-            box-shadow: 0 0 120px 32px rgba(249,115,22,0.46),
-                        0 0 200px 40px rgba(139,92,246,0.14);
-          }
-          .big-flame-animate {
-            animation: flameRingPulse 1.4s cubic-bezier(0.6,0.2,0.4,1) infinite alternate;
-          }
-          @keyframes flameRingPulse {
-            0% { transform: scale(1); filter: brightness(1); }
-            70% { transform: scale(1.13); filter: brightness(1.2);}
-            100% { transform: scale(1); filter: brightness(1);}
-          }
-          /* Confetti animation same as main streak card */
-          @keyframes confettiPop {
-            0% { transform: translateY(0) scale(0); opacity: 1; }
-            60% { transform: translateY(-24px) scale(1.05); opacity: 1; }
-            100% { transform: translateY(-34px) scale(1.01); opacity: 0; }
-          }
-          .confetti-particle {
-            animation: confettiPop 1.5s cubic-bezier(.5,1.6,.32,1) forwards;
-          }
-        `}</style>
-        <div className="w-full max-w-sm px-6 streak-intro-appear">
-          <div className={`bg-gradient-to-br from-orange-500/10 via-red-500/15 to-purple-500/10
-              rounded-3xl p-10 text-center shadow-2xl border-2 border-orange-500/30 relative transition-all duration-700
-              ${onboardingAnimating ? "onboarding-glow anim" : "onboarding-glow"}`}>
-            {/* Flame mascot/graphic */}
-            <div className="flex flex-col items-center mb-8 relative">
-              <div className={`w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-tr from-orange-600 via-orange-500 to-red-500 shadow-xl
-                  ${onboardingAnimating ? "big-flame-animate" : ""}`}>
-                <span className="text-5xl drop-shadow-lg">🔥</span>
-              </div>
-              {/* Show confetti if animating */}
-              {onboardingAnimating && (
-                <div className="absolute inset-0 pointer-events-none">
-                  {[...Array(35)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute confetti-particle"
-                      style={{
-                        left: `${50 + (Math.random() - 0.5) * 80}%`,
-                        top: `${48 + (Math.random() - 0.5) * 36}%`,
-                        animationDelay: `${Math.random() * 0.6}s`,
-                      }}
-                    >
-                      {['🎉', '🔥', '⭐', '👑', '✨'][Math.floor(Math.random() * 5)]}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            {/* HEADLINE */}
-            <div className="text-2xl md:text-3xl font-extrabold mb-2 bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent select-none">
-              Build your streak. Don’t disappear.
-            </div>
-            {/* SUBLINE */}
-            <div className="text-base md:text-lg text-gray-300 mb-8">Check in once a day. We’ll track your momentum.</div>
-            <button
-              className="w-full py-4 rounded-xl text-lg font-bold bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 transition-all hover:scale-105 active:scale-95 duration-300 shadow-lg shadow-orange-500/20"
-              disabled={onboardingAnimating}
-              onClick={handleStartDay1}
-            >
-              Start My Streak
-            </button>
-          </div>
-        </div>
-      </div>
+      <OnboardingScreen
+        animating={onboardingAnimating}
+        onStartDay1={handleStartDay1}
+        buttonDisabled={onboardingAnimating}
+      />
     );
   }
-
-  // -- 9. Show Motivation Modal after Day 1 check-in
-  const MotivationModal = () => (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B0B0F]/80 backdrop-blur-sm">
-      <div className="bg-gradient-to-br from-purple-900/80 to-blue-900/80 border border-blue-700 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl animate-fade-in">
-        <div className="text-2xl font-bold mb-4 bg-gradient-to-r from-yellow-300 via-orange-400 to-purple-400 bg-clip-text text-transparent">
-          Most give up in silence.<br />
-          You didn’t.<br />
-          Welcome to Day 1.
-        </div>
-        <button
-          className="mt-6 py-3 px-7 rounded-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-lg transition-all hover:scale-105 active:scale-95"
-          onClick={() => setShowMotivationModal(false)}
-        >
-          Continue
-        </button>
-      </div>
-    </div>
-  );
 
   // -- 8. Regular main homefeed UI 
   return (
     <>
-      {showMotivationModal && <MotivationModal />}
+      <MotivationModal
+        show={showMotivationModal}
+        onClose={() => setShowMotivationModal(false)}
+      />
       <style>{`
         @keyframes slideUpFade {
           from {
