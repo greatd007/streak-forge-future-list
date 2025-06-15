@@ -7,6 +7,7 @@ import { MilestoneConfetti } from './MilestoneConfetti';
 import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import FeedSortBar from './FeedSortBar';
+import RightSidebar from './RightSidebar';
 
 export function HomeFeed() {
   const [checkedIn, setCheckedIn] = useState(false);
@@ -35,46 +36,68 @@ export function HomeFeed() {
   React.useEffect(() => {
     if (checkedIn) {
       // Slight delay for smooth transition
-      const timeout = setTimeout(() => setShowFeed(true), 500);
+      const timeout = setTimeout(() => setShowFeed(true), 600);
       return () => clearTimeout(timeout);
     }
   }, [checkedIn]);
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col items-center w-full">
-      <div className="flex flex-col gap-0 w-full items-center">
-        {/* Streak Card: visible before check-in, fades out on check-in */}
-        <div className={`w-full flex justify-center transition-all duration-500 ${checkedIn ? 'opacity-0 h-0 pointer-events-none' : 'opacity-100 h-auto'}`}>
-          <div className="max-w-md w-full pt-12">
-            <HeroStreakCard
-              currentStreak={currentStreak}
-              checkedInToday={checkedIn}
-              onCheckIn={handleCheckIn}
-            />
+    <div className="min-h-screen bg-[#0B0B0F] text-white w-full">
+      <div className="flex w-full justify-center">
+        {/* Before Check-In: Focused Mode - Only Streak Card */}
+        {!checkedIn && (
+          <div className="flex justify-center items-center min-h-screen w-full">
+            <div className="max-w-lg w-full px-4">
+              <HeroStreakCard
+                currentStreak={currentStreak}
+                checkedInToday={checkedIn}
+                onCheckIn={handleCheckIn}
+              />
+            </div>
           </div>
-        </div>
-        
-        {/* Feed: only reveal after check-in */}
-        <div
-          className={`w-full flex flex-col items-center transition-all duration-500 ${
-            showFeed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'
-          }`}
-        >
-          {/* Sticky post CTA */}
-          <div className="sticky top-0 z-20 bg-[#0B0B0F]/95 backdrop-blur-md flex flex-col gap-3 items-center w-full max-w-2xl mx-auto px-4 pt-4">
-            <Button className="w-full py-3 mb-2 rounded-xl bg-blue-700 hover:bg-blue-800 font-semibold shadow ring-1 ring-blue-500/40">
-              Post your Day {currentStreak + 1} update
-            </Button>
-            <FeedSortBar />
+        )}
+
+        {/* After Check-In: Engagement Mode - Feed + Sidebar */}
+        {checkedIn && (
+          <div className="flex w-full max-w-7xl mx-auto">
+            {/* Main Feed Column */}
+            <main className="flex-1 flex justify-center">
+              <div
+                className={`w-full max-w-[680px] transition-all duration-700 ${
+                  showFeed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                }`}
+              >
+                {/* Sticky Post CTA */}
+                <div className="sticky top-0 z-20 bg-[#0B0B0F]/95 backdrop-blur-md flex flex-col gap-3 items-center w-full px-4 pt-6 pb-4">
+                  <Button className="w-full py-4 mb-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold shadow-lg ring-1 ring-blue-500/40 text-lg hover:shadow-blue-500/25 transition-all">
+                    Post your Day {currentStreak} update
+                  </Button>
+                  <FeedSortBar />
+                </div>
+                
+                {/* Scrollable Feed */}
+                <div className="px-4 pb-6">
+                  <ScrollArea className="w-full h-[75vh] rounded-xl shadow-xl border border-gray-800 bg-[#101017] hover:shadow-2xl transition-shadow duration-300">
+                    <MiniFeedPreview />
+                  </ScrollArea>
+                </div>
+              </div>
+            </main>
+
+            {/* Right Sidebar - Only show after check-in */}
+            <aside className="hidden lg:block w-[320px] flex-shrink-0 px-4">
+              <div 
+                className={`sticky top-6 transition-all duration-700 delay-300 ${
+                  showFeed ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+                }`}
+              >
+                <RightSidebar />
+              </div>
+            </aside>
           </div>
-          {/* Scrollable feed */}
-          <div className="mt-2 pb-4 w-full flex justify-center">
-            <ScrollArea className="w-full max-w-2xl h-[70vh] rounded-xl shadow-lg border border-gray-800 bg-[#101017]">
-              <MiniFeedPreview />
-            </ScrollArea>
-          </div>
-        </div>
+        )}
       </div>
+
       {/* Modals */}
       <MoodCheckIn show={showMoodCheckIn} onClose={() => setShowMoodCheckIn(false)} />
       <MilestoneConfetti show={showMilestoneConfetti} streakDay={milestoneDay} onClose={() => setShowMilestoneConfetti(false)} />
