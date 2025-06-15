@@ -30,6 +30,10 @@ const menuItems = [
     title: "👤 Profile",
     key: "profile",
   },
+  {
+    title: "⚙️ Settings",
+    key: "settings",
+  },
 ];
 
 interface AppSidebarProps {

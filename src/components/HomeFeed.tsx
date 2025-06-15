@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { HeroStreakCard } from './HeroStreakCard';
 import { MiniFeedPreview } from './MiniFeedPreview';
@@ -13,37 +12,23 @@ export function HomeFeed() {
   const [showMoodCheckIn, setShowMoodCheckIn] = useState(false);
   const [showMilestoneConfetti, setShowMilestoneConfetti] = useState(false);
   const [milestoneDay, setMilestoneDay] = useState(0);
-  const [showSocialShoutout, setShowSocialShoutout] = useState(false);
-  const [socialStreakDay, setSocialStreakDay] = useState(0);
   const [currentStreak, setCurrentStreak] = useState(6);
   const [showFounderAccessUpgrade, setShowFounderAccessUpgrade] = useState(false);
   const [upgradeTriggger, setUpgradeTrigger] = useState<"milestone" | "badge-unlock" | "streak-achievement">("milestone");
+  const [showSocialShoutout, setShowSocialShoutout] = useState(false);
+  const [socialStreakDay, setSocialStreakDay] = useState(0);
 
   const handleCheckIn = () => {
     if (!checkedIn) {
       setCheckedIn(true);
       setCurrentStreak(prev => prev + 1);
       setShowMoodCheckIn(true);
-      
+
       // Trigger milestone confetti for specific days
       const newStreak = currentStreak + 1;
       if (newStreak === 7 || newStreak === 30 || newStreak === 100) {
         setShowMilestoneConfetti(true);
         setMilestoneDay(newStreak);
-        
-        // Show Founder Access upgrade after milestone
-        setTimeout(() => {
-          setUpgradeTrigger("milestone");
-          setShowFounderAccessUpgrade(true);
-        }, 3000);
-      }
-
-      // Show social shoutout for major milestones
-      if (newStreak === 7 || newStreak === 30 || newStreak === 100) {
-        setTimeout(() => {
-          setShowSocialShoutout(true);
-          setSocialStreakDay(newStreak);
-        }, 5000);
       }
     }
   };
@@ -89,19 +74,6 @@ export function HomeFeed() {
         show={showMilestoneConfetti} 
         streakDay={milestoneDay} 
         onClose={() => setShowMilestoneConfetti(false)} 
-      />
-
-      <SocialShoutout 
-        show={showSocialShoutout} 
-        streakDay={socialStreakDay} 
-        onClose={() => setShowSocialShoutout(false)} 
-      />
-
-      <FounderAccessUpgrade
-        show={showFounderAccessUpgrade}
-        trigger={upgradeTriggger}
-        onClose={() => setShowFounderAccessUpgrade(false)}
-        onUpgrade={handleFounderAccessUpgrade}
       />
     </div>
   );
