@@ -24,66 +24,57 @@ export const StreakOrb3D = ({
     <div className="relative w-40 h-40 mx-auto select-none pointer-events-none">
       <svg
         viewBox="0 0 148 148"
-        className="w-40 h-40 drop-shadow-lg"
+        className="w-40 h-40 drop-shadow"
         style={{
           filter: isAnimating
-            ? "drop-shadow(0 0 24px #fde68a) brightness(1.12)"
-            : "drop-shadow(0 0 16px #fbbf24cc) brightness(1)",
+            ? "drop-shadow(0 0 14px #fde68a77) brightness(1.04)"
+            : "drop-shadow(0 0 8px #fbbf2444) brightness(0.98)",
           transition: "filter 0.6s cubic-bezier(0.4,0,0.2,1)",
         }}
       >
-        {/* Orb background: faux-glass, layered gradients for 3D feel */}
         <defs>
           <radialGradient id="orb-glass" cx="50%" cy="40%" r="70%">
-            <stop offset="0%" stopColor="#fffbe6" stopOpacity="0.89" />
-            <stop offset="30%" stopColor="#fef3c7" stopOpacity="0.40" />
-            <stop offset="60%" stopColor="#fde68a" stopOpacity="0.21" />
-            <stop offset="85%" stopColor="#f59e42" stopOpacity="0.07" />
-            <stop offset="100%" stopColor="#d97706" stopOpacity="0.13" />
+            <stop offset="0%" stopColor="#fffbe6" stopOpacity="0.56" />
+            <stop offset="30%" stopColor="#fef3c7" stopOpacity="0.19" />
+            <stop offset="60%" stopColor="#fde68a" stopOpacity="0.13" />
+            <stop offset="85%" stopColor="#f59e42" stopOpacity="0.03" />
+            <stop offset="100%" stopColor="#d97706" stopOpacity="0.08" />
           </radialGradient>
-          {/* Progress Ring Gradient */}
           <linearGradient id="streak-progress" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="10%" stopColor="#f59e42" />
-            <stop offset="60%" stopColor="#fbbf24" />
-            <stop offset="100%" stopColor="#fee2b8" />
+            <stop offset="10%" stopColor="#f59e4288" />
+            <stop offset="60%" stopColor="#fbbf2488" />
+            <stop offset="100%" stopColor="#fee2b855" />
           </linearGradient>
-          {/* Glint highlight */}
           <radialGradient id="shine" cx="70%" cy="18%" r="45%">
-            <stop offset="5%" stopColor="#fff" stopOpacity="0.35" />
-            <stop offset="50%" stopColor="#fff" stopOpacity="0.08" />
+            <stop offset="5%" stopColor="#fff" stopOpacity="0.15" />
+            <stop offset="50%" stopColor="#fff" stopOpacity="0.04" />
             <stop offset="100%" stopColor="#000" stopOpacity="0" />
           </radialGradient>
-          {/* Soft colored shadow below */}
           <radialGradient id="orb-shadow" cx="55%" cy="48%" r="60%">
-            <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.16" />
-            <stop offset="60%" stopColor="#de6e22" stopOpacity="0.06" />
-            <stop offset="100%" stopColor="#ef4444" stopOpacity="0.02" />
+            <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.06" />
+            <stop offset="60%" stopColor="#de6e22" stopOpacity="0.02" />
+            <stop offset="100%" stopColor="#ef4444" stopOpacity="0.01" />
           </radialGradient>
         </defs>
-        {/* Shadow beneath orb (for 'floating' effect) */}
         <ellipse
           cx="74"
           cy="130"
           rx="48"
           ry="12"
           fill="url(#orb-shadow)"
-          opacity={0.49}
+          opacity={0.38}
         />
-        {/* Main orb (faux glass crystal w/ inner glow) */}
         <circle cx="74" cy="74" r="66"
           fill="url(#orb-glass)"
-          stroke="#fbbf24"
+          stroke="#fbbf24cc"
           strokeWidth="6"
-          filter="url(#orb-orbGlow)"
         />
-        {/* Glint highlight (shiny top edge) */}
         <ellipse
           cx="110" cy="34"
           rx="22" ry="8"
           fill="url(#shine)"
           style={{ filter: "blur(0.5px)" }}
         />
-        {/* Progress arc (outside rim) */}
         <circle
           cx="74"
           cy="74"
@@ -98,10 +89,10 @@ export const StreakOrb3D = ({
           style={{
             filter:
               isAnimating
-                ? "drop-shadow(0 0 18px #fde68a)"
-                : "drop-shadow(0 0 7px #fbbf24cc)",
+                ? "drop-shadow(0 0 7px #fde68a55)"
+                : "drop-shadow(0 0 3px #fbbf2411)",
           }}
-          opacity={0.96}
+          opacity={0.85}
         />
       </svg>
       {/* Subtle animated pulse on orb container */}
@@ -112,8 +103,8 @@ export const StreakOrb3D = ({
         style={{
           boxShadow:
             isAnimating
-              ? "0 0 40px 8px #fde68a88, 0 2px 18px #ffedd5"
-              : "0 0 13px 2px #fde04755, 0px 0px 3px #fff1ec44",
+              ? "0 0 13px 4px #fde68a33, 0 2px 8px #ffedd544"
+              : "0 0 5px 1px #fde04722, 0px 0px 2px #fff1ec22",
           transition: "box-shadow 0.33s cubic-bezier(0.58,0.0,0.38,1)",
         }}
       />
