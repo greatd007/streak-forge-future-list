@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { HeroStreakCard } from './HeroStreakCard';
 import { MiniFeedPreview } from './MiniFeedPreview';
@@ -8,7 +9,6 @@ import FeedSortBar from './FeedSortBar';
 import RightSidebar from './RightSidebar';
 import { MoodCheckIn } from './MoodCheckIn';
 import { toast } from "@/hooks/use-toast";
-import { OnboardingScreen } from "./OnboardingScreen";
 import { MotivationModal } from "./MotivationModal";
 
 // Helper keys
@@ -22,91 +22,57 @@ function isToday(dateString: string) {
 }
 
 export function HomeFeed() {
-  // onboarding flow detection
-  const [hasCheckedInBefore, setHasCheckedInBefore] = useState<boolean | null>(null);
-  const [onboardingActive, setOnboardingActive] = useState(false);
-  const [onboardingAnimating, setOnboardingAnimating] = useState(false);
   // main streak state
   const [checkedIn, setCheckedIn] = useState(false);
   const [showMoodCheckIn, setShowMoodCheckIn] = useState(false);
   const [showMilestoneConfetti, setShowMilestoneConfetti] = useState(false);
   const [milestoneDay, setMilestoneDay] = useState(0);
-  const [currentStreak, setCurrentStreak] = useState(6);
+  const [currentStreak, setCurrentStreak] = useState(0);
 
   // Animation reveal
   const [showFeed, setShowFeed] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const [showMotivationModal, setShowMotivationModal] = useState(false);
 
-  // -- 1. Load onboarding state, streak, checkin state
+  // -- 1. Load streak and checkin state
   useEffect(() => {
-    // Load streak from storage
     const streakStored = parseInt(localStorage.getItem(STREAK_COUNT_KEY) || "0", 10);
     const checkedInTodayStr = localStorage.getItem(CHECKED_IN_KEY);
     const checkedInToday = checkedInTodayStr && isToday(checkedInTodayStr);
     setCurrentStreak(isNaN(streakStored) ? 0 : streakStored);
     setCheckedIn(!!checkedInToday);
-    // Refactored: onboarding only true if streakStored is null, not if zero
-    if (localStorage.getItem(STREAK_COUNT_KEY) === null) {
-      setOnboardingActive(true);
-      setHasCheckedInBefore(false);
-    } else {
-      setOnboardingActive(false);
-      setHasCheckedInBefore(true);
-    }
   }, []);
 
-  // -- 2. Standard check-in flow (not onboarding, after first)
+  // -- 2. Standard check-in flow 
   const handleCheckIn = () => {
     if (!checkedIn) {
-      // Update streak count and check-in date in storage
       const newStreak = currentStreak + 1;
       setCheckedIn(true);
       setCurrentStreak(newStreak);
       localStorage.setItem(STREAK_COUNT_KEY, String(newStreak));
       localStorage.setItem(CHECKED_IN_KEY, new Date().toISOString().slice(0, 10));
       setShowMoodCheckIn(true);
-      // Confetti for milestones
       if (newStreak === 7 || newStreak === 30 || newStreak === 100) {
         setShowMilestoneConfetti(true);
         setMilestoneDay(newStreak);
       }
+      // Show motivation modal only for first check-in
+      if (newStreak === 1) setShowMotivationModal(true);
+      if (toast && newStreak === 1) {
+        toast({
+          title: "Day 1 secured.",
+          description: "Congrats on starting your streak!",
+        });
+      }
     }
   };
 
-  // -- 3. Onboarding CTA: Start Day 1 (updated for new onboarding)
-  const handleStartDay1 = () => {
-    setOnboardingAnimating(true);
-    setTimeout(() => {
-      setOnboardingActive(false);
-      setCheckedIn(true);
-      setCurrentStreak(1);
-      localStorage.setItem(STREAK_COUNT_KEY, "1");
-      localStorage.setItem(CHECKED_IN_KEY, new Date().toISOString().slice(0, 10));
-      setTimeout(() => {
-        setOnboardingAnimating(false);
-        setShowFeed(false);
-        setShowSidebar(false);
-        setTimeout(() => setShowFeed(true), 800);
-        setTimeout(() => setShowSidebar(true), 1200);
-        setShowMoodCheckIn(true);
-        setShowMotivationModal(true);
-        if (toast) {
-          toast({
-            title: "Day 1 secured.",
-            description: "Congrats on starting your streak!",
-          });
-        }
-      }, 1800); // Allow onboarding animation time
-    }, 700); // Delay for button
-  };
-
-  // -- 4. Mood Check-in logic (unchanged except streak state now local)
+  // -- 3. Mood Check-in logic 
   useEffect(() => {
     const moodCheckKey = "mood_checkin_date";
     const today = new Date().toISOString().slice(0, 10);
     const alreadyChecked = localStorage.getItem(moodCheckKey) === today;
-    if (!checkedIn && !onboardingActive && !alreadyChecked) {
+    if (!checkedIn && !alreadyChecked) {
       const timer = setTimeout(() => {
         if (!checkedIn && localStorage.getItem(moodCheckKey) !== today) {
           setShowMoodCheckIn(true);
@@ -114,18 +80,17 @@ export function HomeFeed() {
       }, 5 * 60 * 1000);
       return () => clearTimeout(timer);
     }
-  }, [checkedIn, onboardingActive]);
+  }, [checkedIn]);
 
-  // -- 5. Mood checkin modal close
   const handleMoodCheckInClose = () => {
     const today = new Date().toISOString().slice(0, 10);
     localStorage.setItem("mood_checkin_date", today);
     setShowMoodCheckIn(false);
   };
 
-  // -- 6. Animate post-onboarding feed/sidebar
+  // -- 4. Animate post check-in feed/sidebar
   useEffect(() => {
-    if (checkedIn && !onboardingActive) {
+    if (checkedIn) {
       const feedTimeout = setTimeout(() => setShowFeed(true), 800);
       const sidebarTimeout = setTimeout(() => setShowSidebar(true), 1200);
       return () => {
@@ -133,21 +98,9 @@ export function HomeFeed() {
         clearTimeout(sidebarTimeout);
       };
     }
-  }, [checkedIn, onboardingActive]);
+  }, [checkedIn]);
 
-  // -- 7. Render onboarding only if true AND not in zero streak state
-  // (show onboarding only if explicitly active, not for day 0)
-  if (onboardingActive) {
-    return (
-      <OnboardingScreen
-        animating={onboardingAnimating}
-        onStartDay1={handleStartDay1}
-        buttonDisabled={onboardingAnimating}
-      />
-    );
-  }
-
-  // -- 8. Regular main homefeed UI 
+  // -- Render
   return (
     <>
       <MotivationModal
@@ -203,7 +156,7 @@ export function HomeFeed() {
 
       <div className="min-h-screen bg-[#0B0B0F] text-white w-full">
         <div className="flex w-full justify-center">
-          {/* BEFORE ANY CHECK-IN: Show 0 day streak card */}
+          {/* Show 0 day streak card when not checked in */}
           {currentStreak === 0 && !checkedIn && (
             <div className="flex justify-center items-center min-h-screen w-full">
               <div className="max-w-lg w-full px-4">
@@ -216,7 +169,7 @@ export function HomeFeed() {
             </div>
           )}
 
-          {/* Before Check-In (Day 1 and onward): Focused Mode */}
+          {/* Focused Mode for subsequent days before check-in */}
           {currentStreak > 0 && !checkedIn && (
             <div className="flex justify-center items-center min-h-screen w-full">
               <div className="max-w-lg w-full px-4">
@@ -229,7 +182,7 @@ export function HomeFeed() {
             </div>
           )}
 
-          {/* After Check-In: Engagement Mode */}
+          {/* Engagement Mode after check-in */}
           {checkedIn && (
             <div className="flex w-full max-w-7xl mx-auto">
               {/* Main Feed Column */}
