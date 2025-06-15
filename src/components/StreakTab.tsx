@@ -40,10 +40,22 @@ export function StreakTab() {
   const longestStreak = 28;
   const consistencyPercentage = 85;
 
+  // Helper: get the date when the streak started
+  const STREAK_COUNT_KEY = "fs_streak_count";
+  const CHECKED_IN_KEY = "fs_checked_in_today";
+  const STREAK_START_DATE_KEY = "fs_streak_start_date";
+
+  // --- New: get/set streak start date on first checkin ---
+  useEffect(() => {
+    const streakCount = parseInt(localStorage.getItem(STREAK_COUNT_KEY) || "0", 10);
+    // If the user has a streak count but no start date, set it now
+    if (streakCount > 0 && !localStorage.getItem(STREAK_START_DATE_KEY)) {
+      localStorage.setItem(STREAK_START_DATE_KEY, new Date().toISOString().slice(0,10));
+    }
+  }, []);
+
   // --- New: Check onboarding state on mount ---
   useEffect(() => {
-    const STREAK_COUNT_KEY = "fs_streak_count";
-    const CHECKED_IN_KEY = "fs_checked_in_today";
     const streakStored = parseInt(localStorage.getItem(STREAK_COUNT_KEY) || "0", 10);
     const checkedInTodayStr = localStorage.getItem(CHECKED_IN_KEY);
     const isFreshUser = !streakStored || streakStored < 1;
@@ -60,20 +72,21 @@ export function StreakTab() {
     // else <= onboarding: all regular UI will be hidden
   }, []);
 
-  // --- New: Day 1 Onboarding flow ---
+  // --- update onboarding logic to also store streak start date ---
   const handleStartDay1 = () => {
     setOnboardingAnimating(true);
     setTimeout(() => {
-      // Register first day
-      localStorage.setItem("fs_streak_count", "1");
-      localStorage.setItem("fs_checked_in_today", new Date().toISOString().slice(0, 10));
+      const todayStr = new Date().toISOString().slice(0, 10);
+      localStorage.setItem(STREAK_COUNT_KEY, "1");
+      localStorage.setItem(CHECKED_IN_KEY, todayStr);
+      localStorage.setItem(STREAK_START_DATE_KEY, todayStr); // NEW: save first check-in date
       setCurrentStreak(1);
       setCheckedIn(true);
       setTimeout(() => {
         setOnboardingAnimating(false);
         setIsOnboarding(false);
-      }, 1400); // Animation time
-    }, 500); // button animation time
+      }, 1400);
+    }, 500);
   };
 
   const handleCheckIn = () => {
@@ -112,53 +125,74 @@ export function StreakTab() {
     setShowMoodCheckIn(false);
   };
 
-  // Compute the first day and days in the current month
+  // --- Calendar month context ---
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth();
   const firstDayOfWeek = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  // --- Consistency: build daily completion array for month up to today ---
+  // --- NEW: get the streak start day-of-month/index for graph offset ---
+  let streakStartDayOfMonth: number | null = null;
+  const streakStartStr = localStorage.getItem(STREAK_START_DATE_KEY);
+  if (streakStartStr) {
+    const streakStartDateObj = new Date(streakStartStr);
+    if (
+      streakStartDateObj.getFullYear() === year &&
+      streakStartDateObj.getMonth() === month
+    ) {
+      streakStartDayOfMonth = streakStartDateObj.getDate(); // 1-indexed
+    }
+  }
+
+  // --- Build monthly streak completion data FROM STREAK START ---
   const buildMonthlyData = () => {
-    const STREAK_COUNT_KEY = "fs_streak_count";
-    const CHECKED_IN_KEY = "fs_checked_in_today";
-    let streakStored = parseInt(localStorage.getItem(STREAK_COUNT_KEY) || "0", 10);
+    const streakStored = parseInt(localStorage.getItem(STREAK_COUNT_KEY) || "0", 10);
     const checkedInTodayStr = localStorage.getItem(CHECKED_IN_KEY);
 
     let lastCheckin = streakStored;
     const isTodayChecked = checkedInTodayStr === new Date().toISOString().slice(0, 10);
-
     if (!isTodayChecked && streakStored > 0) {
       lastCheckin = streakStored - 1;
     }
 
-    const arr: { date: number; completed: boolean }[] = [];
+    // Build the data array for each day with streak start offset/padding
+    const arr: { date: number; completed: boolean | null }[] = [];
     for (let i = 1; i <= daysInMonth; i++) {
-      arr.push({
-        date: i,
-        completed: i <= lastCheckin,
-      });
+      // If streak didn't start this month or hasn't started yet, everything is null prior to start
+      if (!streakStartDayOfMonth || i < streakStartDayOfMonth) {
+        arr.push({ date: i, completed: null });
+      } else {
+        // mark completed if within streak, else false
+        const dayIndex = i - streakStartDayOfMonth; // 0 index for first streak day
+        arr.push({
+          date: i,
+          completed: dayIndex < lastCheckin,
+        });
+      }
     }
     return arr;
   };
 
   const monthlyData = buildMonthlyData();
 
-  // --- New: Build consistency array for current month (one bar per day) ---
-  // We'll make each "completed" day up to today 100%, missed day 40%, and future 0%
+  // --- Build consistency data for graph: only from streak start, pad with 0s for days before ---
   const buildConsistencyData = () => {
-    const consistencyArr: number[] = [];
+    const arr: number[] = [];
     for (let i = 1; i <= daysInMonth; i++) {
-      if (i > today.getDate()) {
-        consistencyArr.push(0); // future
+      if (!streakStartDayOfMonth || i < streakStartDayOfMonth) {
+        arr.push(0); // before streak: no bar (gray)
+      } else if (i > today.getDate()) {
+        arr.push(0); // future
       } else if (monthlyData[i - 1]?.completed) {
-        consistencyArr.push(100);
+        arr.push(100); // completed
+      } else if (monthlyData[i - 1]?.completed === false) {
+        arr.push(40); // missed
       } else {
-        consistencyArr.push(40);
+        arr.push(0);
       }
     }
-    return consistencyArr;
+    return arr;
   };
   const consistencyData = buildConsistencyData();
 
@@ -451,9 +485,11 @@ export function StreakTab() {
                 <div
                   key={index}
                   className={`aspect-square rounded-lg flex items-center justify-center text-sm font-medium ${
-                    day.completed
+                    day.completed === true
                       ? "bg-green-500 text-white"
-                      : "bg-red-500/20 border border-red-500/30 text-red-400"
+                      : day.completed === false
+                      ? "bg-red-500/20 border border-red-500/30 text-red-400"
+                      : "bg-gray-800 border border-gray-700 opacity-30" // before streak start
                   }`}
                 >
                   {day.date}
@@ -473,15 +509,17 @@ export function StreakTab() {
                 <div
                   key={idx}
                   className={`flex-1 rounded-t transition-all duration-300
-                ${value === 100
-                  ? "bg-gradient-to-t from-blue-500 to-green-400"
-                  : value === 40
-                  ? "bg-yellow-400/60"
-                  : "bg-gray-700/20"}
-              `}
+          ${value === 100
+            ? "bg-gradient-to-t from-blue-500 to-green-400"
+            : value === 40
+            ? "bg-yellow-400/60"
+            : "bg-gray-700/20"}
+        `}
                   style={{ height: `${value}%`, minWidth: "4px", maxWidth: "12px" }}
                   title={
-                    value === 100
+                    streakStartDayOfMonth && idx + 1 < streakStartDayOfMonth
+                      ? `Day ${idx + 1}: Before Streak`
+                      : value === 100
                       ? `Day ${idx + 1}: Success`
                       : value === 40
                       ? `Day ${idx + 1}: Missed`
