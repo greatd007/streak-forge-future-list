@@ -7,7 +7,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#0B0B0F] text-white w-full">
       <SidebarProvider>
-        <div className="flex w-full">
+        <div className="flex w-full min-h-screen">
           <AppSidebar />
           <MainContent />
         </div>

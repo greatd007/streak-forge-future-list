@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { SidebarTrigger } from "./ui/sidebar";
 import { HomeFeed } from "./HomeFeed";
 import { StreakTab } from "./StreakTab";
 import { IdeaBankTab } from "./IdeaBankTab";
@@ -35,6 +36,10 @@ export function MainContent() {
   return (
     <div className="flex w-full min-h-screen bg-black">
       <main className="w-full flex flex-col">
+        {/* Sidebar trigger for mobile/desktop */}
+        <div className="p-4">
+          <SidebarTrigger />
+        </div>
         {renderActiveTab()}
       </main>
     </div>
