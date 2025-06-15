@@ -7,6 +7,7 @@ import { Button } from './ui/button';
 import FeedSortBar from './FeedSortBar';
 import RightSidebar from './RightSidebar';
 import { MoodCheckIn } from './MoodCheckIn';
+import { toast } from "@/hooks/use-toast"; // <-- FIXED HERE
 
 // Helper keys
 const STREAK_COUNT_KEY = "fs_streak_count";
@@ -35,7 +36,7 @@ export function HomeFeed() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [showMotivationModal, setShowMotivationModal] = useState(false);
   // For toast
-  const { toast } = require("@/hooks/use-toast"); // React hook OK to use like this for side effect
+  // const { toast } = require("@/hooks/use-toast"); // React hook OK to use like this for side effect
 
   // -- 1. Load onboarding state, streak, checkin state
   useEffect(() => {
