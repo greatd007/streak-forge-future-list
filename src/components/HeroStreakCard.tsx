@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { Flame, CheckCircle } from 'lucide-react';
+import { StreakOrb3D } from './StreakOrb3D';
 
 interface HeroStreakCardProps {
   currentStreak: number;
@@ -37,7 +37,7 @@ export function HeroStreakCard({ currentStreak, checkedInToday, onCheckIn }: Her
     return () => clearInterval(timer);
   }, [currentStreak]);
 
-  // Animate progress ring
+  // Animate progress ring (now orb) after 800ms for smooth load
   useEffect(() => {
     setTimeout(() => {
       setProgressPercentage(progress);
@@ -72,41 +72,27 @@ export function HeroStreakCard({ currentStreak, checkedInToday, onCheckIn }: Her
           50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(249, 115, 22, 0.6); }
           100% { transform: scale(1); box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
         }
-        
         @keyframes flameRingPulse {
           0% { transform: scale(1); filter: brightness(1); }
           50% { transform: scale(1.2); filter: brightness(1.5); }
           100% { transform: scale(1); filter: brightness(1); }
         }
-        
         @keyframes confettiPop {
           0% { transform: translateY(0) scale(0); opacity: 1; }
           50% { transform: translateY(-20px) scale(1); opacity: 1; }
           100% { transform: translateY(-40px) scale(0.8); opacity: 0; }
         }
-        
-        @keyframes progressFill {
-          from { stroke-dashoffset: ${2 * Math.PI * 64}; }
-          to { stroke-dashoffset: ${2 * Math.PI * 64 * (1 - progressPercentage / 100)}; }
-        }
-        
         .bounce-glow {
           animation: bounceGlow 0.3s ease-out;
         }
-        
         .flame-pulse {
           animation: flameRingPulse 1s ease-out;
         }
-        
         .confetti-particle {
           animation: confettiPop 1.5s ease-out forwards;
         }
-        
-        .progress-animate {
-          animation: progressFill 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
       `}</style>
-      
+
       <div className="relative max-w-lg mx-auto">
         {/* Main Streak Card */}
         <div className="bg-gradient-to-br from-orange-500/15 via-red-500/15 to-purple-500/15 border-2 border-orange-500/40 rounded-3xl p-10 text-center relative overflow-hidden shadow-2xl shadow-orange-500/10">
@@ -129,46 +115,19 @@ export function HeroStreakCard({ currentStreak, checkedInToday, onCheckIn }: Her
             </div>
           </div>
 
-          {/* Progress Ring with enhanced animation */}
-          <div className="relative w-36 h-36 mx-auto mb-8">
-            <svg className="w-36 h-36 transform -rotate-90" viewBox="0 0 144 144">
-              {/* Background Circle */}
-              <circle
-                cx="72"
-                cy="72"
-                r="64"
-                stroke="rgba(75, 85, 99, 0.3)"
-                strokeWidth="14"
-                fill="none"
-              />
-              {/* Progress Circle with smooth animation */}
-              <circle
-                cx="72"
-                cy="72"
-                r="64"
-                stroke="url(#gradient)"
-                strokeWidth="14"
-                fill="none"
-                strokeLinecap="round"
-                strokeDasharray={`${2 * Math.PI * 64}`}
-                strokeDashoffset={`${2 * Math.PI * 64 * (1 - progressPercentage / 100)}`}
-                className="transition-all duration-[2000ms] ease-out"
-                style={{ filter: isAnimating ? 'drop-shadow(0 0 10px rgba(249, 115, 22, 0.8))' : 'none' }}
-              />
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#f97316" />
-                  <stop offset="100%" stopColor="#ef4444" />
-                </linearGradient>
-              </defs>
-            </svg>
-            
-            {/* Center Flame with pulse animation */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Flame className={`w-14 h-14 transition-all duration-300 ${
-                checkedInToday ? 'text-orange-400' : 'text-gray-500'
-              } ${isAnimating ? 'flame-pulse' : ''}`} />
-            </div>
+          {/* NEW: 3D Orb Progress */}
+          <div className="relative mx-auto mb-8">
+            <StreakOrb3D
+              progress={progressPercentage}
+              isAnimating={isAnimating}
+              centerIcon={
+                <Flame
+                  className={`w-14 h-14 transition-all duration-300 ${
+                    checkedInToday ? 'text-orange-400' : 'text-gray-500'
+                  } ${isAnimating ? 'flame-pulse' : ''}`}
+                />
+              }
+            />
           </div>
 
           {/* Next Milestone */}
