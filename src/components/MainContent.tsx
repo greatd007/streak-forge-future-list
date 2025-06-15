@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { HomeFeed } from "./HomeFeed";
@@ -9,6 +8,7 @@ import { ProfileTab } from "./ProfileTab";
 import { SettingsTab } from "./SettingsTab";
 import { FounderAccessTab } from "./FounderAccessTab";
 import { AppSidebar } from "./AppSidebar";
+import { NotificationsTab } from "./NotificationsTab";
 
 export function MainContent() {
   const [activeTab, setActiveTab] = useState("home");
@@ -25,6 +25,8 @@ export function MainContent() {
         return <LeaderboardTab />;
       case "founder-access":
         return <FounderAccessTab />;
+      case "notifications":
+        return <NotificationsTab />;
       case "profile":
         return <ProfileTab />;
       case "settings":
