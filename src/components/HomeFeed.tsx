@@ -5,6 +5,11 @@ import { StreakFlame } from "./StreakFlame";
 import { MoodCheckIn } from "./MoodCheckIn";
 import { ReflectionCard } from "./ReflectionCard";
 import { SocialShoutout } from "./SocialShoutout";
+import { StreakJourneyTracker } from "./StreakJourneyTracker";
+import { MilestoneConfetti } from "./MilestoneConfetti";
+import { WeeklyDigestCard } from "./WeeklyDigestCard";
+import { HiddenAchievements } from "./HiddenAchievements";
+import { MiniWidgets } from "./MiniWidgets";
 
 const mockPosts = [
   {
@@ -77,6 +82,7 @@ export function HomeFeed() {
   const [userMood, setUserMood] = useState<string | null>(null);
   const [showReflection, setShowReflection] = useState(false);
   const [showSocialShoutout, setShowSocialShoutout] = useState(false);
+  const [showMilestoneConfetti, setShowMilestoneConfetti] = useState(false);
 
   // Show reflection card after 10pm
   useEffect(() => {
@@ -91,9 +97,10 @@ export function HomeFeed() {
     setCurrentStreak(prev => prev + 1);
     setShowMoodCheckIn(true);
     
-    // Show social shoutout for milestone streaks
+    // Show milestone confetti for achievements
     if ([7, 30, 100].includes(currentStreak + 1)) {
-      setTimeout(() => setShowSocialShoutout(true), 2000);
+      setTimeout(() => setShowMilestoneConfetti(true), 1000);
+      setTimeout(() => setShowSocialShoutout(true), 4000);
     }
   };
 
@@ -114,6 +121,11 @@ export function HomeFeed() {
       {/* Header */}
       <div className="sticky top-0 bg-[#0B0B0F]/80 backdrop-blur-md border-b border-gray-800 p-4">
         <h1 className="text-xl font-bold">Home</h1>
+      </div>
+
+      {/* Streak Journey Tracker */}
+      <div className="p-6 border-b border-gray-800">
+        <StreakJourneyTracker currentStreak={currentStreak} targetStreak={100} />
       </div>
 
       {/* Hero Streak Card */}
@@ -218,6 +230,23 @@ export function HomeFeed() {
             <p className="text-xs text-gray-400">early bird</p>
           </div>
         </div>
+      </div>
+
+      {/* Weekly Digest & Hidden Achievements */}
+      <div className="p-4 border-b border-gray-800 space-y-4">
+        <WeeklyDigestCard />
+        <HiddenAchievements />
+      </div>
+
+      {/* Mini Widgets */}
+      <div className="p-4 border-b border-gray-800">
+        <h3 className="text-lg font-bold mb-4">Your Stats</h3>
+        <MiniWidgets 
+          longestStreak={28}
+          consistencyPercentile={94}
+          buildLogs={13}
+          daysActive={47}
+        />
       </div>
 
       {/* Mini Leaderboard Preview */}
@@ -341,6 +370,13 @@ export function HomeFeed() {
         show={showSocialShoutout}
         streakDay={currentStreak}
         onClose={() => setShowSocialShoutout(false)}
+      />
+
+      {/* Milestone Confetti */}
+      <MilestoneConfetti
+        show={showMilestoneConfetti}
+        streakDay={currentStreak}
+        onClose={() => setShowMilestoneConfetti(false)}
       />
     </div>
   );
