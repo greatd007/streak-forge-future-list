@@ -132,6 +132,16 @@ export function HomeFeed() {
     }
   }, [checkedIn, currentStreak, toast]);
 
+  // Add handler for post button
+  const handlePostUpdate = () => {
+    if (toast) {
+      toast({
+        title: "Post created!",
+        description: `Your Day ${currentStreak} update has been shared.`,
+      });
+    }
+  };
+
   // -- Render
   return (
     <>
@@ -295,7 +305,10 @@ export function HomeFeed() {
                 >
                   {/* Sticky Post CTA with smooth entrance */}
                   <div className="sticky top-0 z-20 bg-[#0B0B0F]/95 backdrop-blur-md flex flex-col gap-3 items-center w-full px-4 pt-6 pb-4">
-                    <Button className="w-full py-4 mb-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold shadow-lg ring-1 ring-blue-500/40 text-lg hover:shadow-blue-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                    <Button 
+                      onClick={handlePostUpdate}
+                      className="w-full py-4 mb-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-semibold shadow-lg ring-1 ring-blue-500/40 text-lg hover:shadow-blue-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                    >
                       Post your Day {currentStreak} update
                     </Button>
                     <FeedSortBar />

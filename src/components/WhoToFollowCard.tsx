@@ -1,6 +1,7 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const people = [
   {
@@ -21,6 +22,25 @@ const people = [
 ];
 
 export default function WhoToFollowCard() {
+  const [followedUsers, setFollowedUsers] = useState<string[]>([]);
+  const { toast } = useToast();
+
+  const handleFollow = (username: string) => {
+    if (followedUsers.includes(username)) {
+      setFollowedUsers(prev => prev.filter(u => u !== username));
+      toast({
+        title: "Unfollowed",
+        description: `You unfollowed ${username}`,
+      });
+    } else {
+      setFollowedUsers(prev => [...prev, username]);
+      toast({
+        title: "Following",
+        description: `You're now following ${username}`,
+      });
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -63,9 +83,14 @@ export default function WhoToFollowCard() {
               </div>
               <Button 
                 size="sm" 
-                className="rounded-full px-4 py-1 bg-white text-black font-medium hover:bg-gray-200 transition-all duration-300 hover:scale-105 active:scale-95"
+                onClick={() => handleFollow(p.username)}
+                className={`rounded-full px-4 py-1 font-medium transition-all duration-300 hover:scale-105 active:scale-95 ${
+                  followedUsers.includes(p.username)
+                    ? 'bg-gray-600 text-white hover:bg-gray-700'
+                    : 'bg-white text-black hover:bg-gray-200'
+                }`}
               >
-                Follow
+                {followedUsers.includes(p.username) ? 'Following' : 'Follow'}
               </Button>
             </div>
           ))}

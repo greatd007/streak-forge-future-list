@@ -1,5 +1,5 @@
-
 import { MessageCircle, Heart } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 interface FeedItem {
   id: string;
@@ -46,6 +46,29 @@ const sampleFeed: FeedItem[] = Array.from({length: 20}).map((_, idx) => ({
 }));
 
 export function MiniFeedPreview() {
+  const { toast } = useToast();
+
+  const handleSeeMore = () => {
+    toast({
+      title: "Loading more posts...",
+      description: "Fetching the latest community updates.",
+    });
+  };
+
+  const handleLike = (itemId: string) => {
+    toast({
+      title: "Liked!",
+      description: "You liked this post.",
+    });
+  };
+
+  const handleComment = (itemId: string) => {
+    toast({
+      title: "Comment",
+      description: "Comment feature coming soon!",
+    });
+  };
+
   return (
     <div className="h-full flex flex-col">
       <h3 className="text-lg font-bold mb-4 text-white px-2 pt-2">Recent Check-ins</h3>
@@ -66,12 +89,18 @@ export function MiniFeedPreview() {
               </div>
               <p className="text-sm text-gray-200 break-words">{item.content}</p>
               <div className="flex items-center gap-5 mt-1 text-xs text-gray-400">
-                <div className="flex items-center gap-1">
+                <button 
+                  onClick={() => handleLike(item.id)}
+                  className="flex items-center gap-1 hover:text-red-400 transition-colors"
+                >
                   <Heart className="w-3.5 h-3.5" />{item.likes}
-                </div>
-                <div className="flex items-center gap-1">
+                </button>
+                <button 
+                  onClick={() => handleComment(item.id)}
+                  className="flex items-center gap-1 hover:text-blue-400 transition-colors"
+                >
                   <MessageCircle className="w-3.5 h-3.5" />{item.comments}
-                </div>
+                </button>
               </div>
             </div>
           </div>
@@ -79,11 +108,13 @@ export function MiniFeedPreview() {
       </div>
       
       <div className="pt-2 pb-1 px-2 bg-gradient-to-t from-black via-black/60 to-transparent sticky bottom-0 z-10">
-        <button className="w-full text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors py-2 rounded-lg text-center bg-black/30 border border-gray-800">
+        <button 
+          onClick={handleSeeMore}
+          className="w-full text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors py-2 rounded-lg text-center bg-black/30 border border-gray-800 hover:bg-black/50"
+        >
           See more →
         </button>
       </div>
     </div>
   );
 }
-
