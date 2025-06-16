@@ -1,5 +1,7 @@
-import { MessageCircle, Heart } from 'lucide-react';
+
+import { MessageCircle, Heart, Share2, Bookmark } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { useState } from 'react';
 
 interface FeedItem {
   id: string;
@@ -12,6 +14,7 @@ interface FeedItem {
   content: string;
   likes: number;
   comments: number;
+  timestamp: string;
 }
 
 // Generate more items for scrolling demonstration
@@ -43,10 +46,13 @@ const sampleFeed: FeedItem[] = Array.from({length: 20}).map((_, idx) => ({
   content: contents[idx % contents.length],
   likes: 4 + (idx * 3) % 25,
   comments: idx % 5,
+  timestamp: `${idx + 1}h`,
 }));
 
 export function MiniFeedPreview() {
   const { toast } = useToast();
+  const [likedPosts, setLikedPosts] = useState<string[]>([]);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<string[]>([]);
 
   const handleSeeMore = () => {
     toast({
@@ -56,16 +62,55 @@ export function MiniFeedPreview() {
   };
 
   const handleLike = (itemId: string) => {
-    toast({
-      title: "Liked!",
-      description: "You liked this post.",
-    });
+    if (likedPosts.includes(itemId)) {
+      setLikedPosts(prev => prev.filter(id => id !== itemId));
+      toast({
+        title: "Unliked",
+        description: "Removed like from post.",
+      });
+    } else {
+      setLikedPosts(prev => [...prev, itemId]);
+      toast({
+        title: "Liked!",
+        description: "You liked this post.",
+      });
+    }
   };
 
   const handleComment = (itemId: string) => {
     toast({
       title: "Comment",
-      description: "Comment feature coming soon!",
+      description: "Opening comment thread...",
+    });
+  };
+
+  const handleShare = (itemId: string) => {
+    toast({
+      title: "Shared",
+      description: "Post link copied to clipboard!",
+    });
+  };
+
+  const handleBookmark = (itemId: string) => {
+    if (bookmarkedPosts.includes(itemId)) {
+      setBookmarkedPosts(prev => prev.filter(id => id !== itemId));
+      toast({
+        title: "Removed bookmark",
+        description: "Post removed from bookmarks.",
+      });
+    } else {
+      setBookmarkedPosts(prev => [...prev, itemId]);
+      toast({
+        title: "Bookmarked",
+        description: "Post saved to bookmarks!",
+      });
+    }
+  };
+
+  const handleUserClick = (user: FeedItem['user']) => {
+    toast({
+      title: "Profile",
+      description: `Viewing ${user.name}'s profile`,
     });
   };
 
@@ -76,30 +121,63 @@ export function MiniFeedPreview() {
       <div className="flex-1 flex flex-col gap-2 overflow-y-auto pr-1 custom-scrollbar">
         {sampleFeed.map((item) => (
           <div key={item.id} className="flex items-start gap-3 px-2 py-3 border-b border-[#222] hover:bg-gray-900/60 transition rounded-lg">
-            <img
-              src={item.user.avatar}
-              alt={item.user.name}
-              className="w-9 h-9 rounded-full flex-shrink-0"
-            />
+            <button
+              onClick={() => handleUserClick(item.user)}
+              className="hover:scale-105 transition-transform duration-200"
+            >
+              <img
+                src={item.user.avatar}
+                alt={item.user.name}
+                className="w-9 h-9 rounded-full flex-shrink-0"
+              />
+            </button>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium text-white text-sm">{item.user.name}</span>
+                <button
+                  onClick={() => handleUserClick(item.user)}
+                  className="font-medium text-white text-sm hover:text-orange-400 transition-colors"
+                >
+                  {item.user.name}
+                </button>
                 <span className="text-xs text-orange-400 font-bold">Day {item.streakDay}</span>
-                <span className="text-xs text-gray-400">{item.user.username}</span>
+                <button
+                  onClick={() => handleUserClick(item.user)}
+                  className="text-xs text-gray-400 hover:text-gray-300 transition-colors"
+                >
+                  {item.user.username}
+                </button>
+                <span className="text-xs text-gray-500">• {item.timestamp}</span>
               </div>
-              <p className="text-sm text-gray-200 break-words">{item.content}</p>
-              <div className="flex items-center gap-5 mt-1 text-xs text-gray-400">
+              <p className="text-sm text-gray-200 break-words mb-2">{item.content}</p>
+              <div className="flex items-center gap-4 text-xs text-gray-400">
                 <button 
                   onClick={() => handleLike(item.id)}
-                  className="flex items-center gap-1 hover:text-red-400 transition-colors"
+                  className={`flex items-center gap-1 transition-colors hover:scale-105 ${
+                    likedPosts.includes(item.id) ? 'text-red-400' : 'hover:text-red-400'
+                  }`}
                 >
-                  <Heart className="w-3.5 h-3.5" />{item.likes}
+                  <Heart className={`w-3.5 h-3.5 ${likedPosts.includes(item.id) ? 'fill-current' : ''}`} />
+                  {item.likes + (likedPosts.includes(item.id) ? 1 : 0)}
                 </button>
                 <button 
                   onClick={() => handleComment(item.id)}
-                  className="flex items-center gap-1 hover:text-blue-400 transition-colors"
+                  className="flex items-center gap-1 hover:text-blue-400 transition-colors hover:scale-105"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />{item.comments}
+                </button>
+                <button 
+                  onClick={() => handleShare(item.id)}
+                  className="flex items-center gap-1 hover:text-green-400 transition-colors hover:scale-105"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                </button>
+                <button 
+                  onClick={() => handleBookmark(item.id)}
+                  className={`flex items-center gap-1 transition-colors hover:scale-105 ${
+                    bookmarkedPosts.includes(item.id) ? 'text-yellow-400' : 'hover:text-yellow-400'
+                  }`}
+                >
+                  <Bookmark className={`w-3.5 h-3.5 ${bookmarkedPosts.includes(item.id) ? 'fill-current' : ''}`} />
                 </button>
               </div>
             </div>
@@ -110,7 +188,7 @@ export function MiniFeedPreview() {
       <div className="pt-2 pb-1 px-2 bg-gradient-to-t from-black via-black/60 to-transparent sticky bottom-0 z-10">
         <button 
           onClick={handleSeeMore}
-          className="w-full text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors py-2 rounded-lg text-center bg-black/30 border border-gray-800 hover:bg-black/50"
+          className="w-full text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors py-2 rounded-lg text-center bg-black/30 border border-gray-800 hover:bg-black/50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
         >
           See more →
         </button>

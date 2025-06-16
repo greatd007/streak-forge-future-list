@@ -8,16 +8,19 @@ const people = [
     username: "@topbuilder",
     streak: 45,
     avatar: "https://avatar.vercel.sh/api/topbuilder",
+    profileUrl: "/profile/topbuilder",
   },
   {
     username: "@ideamaker",
     streak: 30,
     avatar: "https://avatar.vercel.sh/api/ideamaker",
+    profileUrl: "/profile/ideamaker",
   },
   {
     username: "@growthhacker",
     streak: 22,
     avatar: "https://avatar.vercel.sh/api/growthhacker",
+    profileUrl: "/profile/growthhacker",
   },
 ];
 
@@ -39,6 +42,13 @@ export default function WhoToFollowCard() {
         description: `You're now following ${username}`,
       });
     }
+  };
+
+  const handleProfileClick = (person: typeof people[0]) => {
+    toast({
+      title: "Profile",
+      description: `Viewing ${person.username}'s profile`,
+    });
   };
 
   return (
@@ -72,15 +82,20 @@ export default function WhoToFollowCard() {
               className="flex items-center gap-3 hover:bg-gray-800/30 rounded-lg p-2 -m-2 transition-all duration-300 person-hover"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <img
-                src={p.avatar}
-                alt={p.username}
-                className="w-10 h-10 rounded-full object-cover transition-transform duration-300 hover:scale-110"
-              />
-              <div className="flex-1">
-                <p className="font-medium text-white">{p.username}</p>
-                <span className="text-sm text-orange-400 font-medium">🔥 {p.streak}-day streak</span>
-              </div>
+              <button
+                onClick={() => handleProfileClick(p)}
+                className="flex items-center gap-3 flex-1 text-left hover:scale-105 transition-transform duration-200"
+              >
+                <img
+                  src={p.avatar}
+                  alt={p.username}
+                  className="w-10 h-10 rounded-full object-cover transition-transform duration-300 hover:scale-110"
+                />
+                <div className="flex-1">
+                  <p className="font-medium text-white hover:text-orange-400 transition-colors">{p.username}</p>
+                  <span className="text-sm text-orange-400 font-medium">🔥 {p.streak}-day streak</span>
+                </div>
+              </button>
               <Button 
                 size="sm" 
                 onClick={() => handleFollow(p.username)}
